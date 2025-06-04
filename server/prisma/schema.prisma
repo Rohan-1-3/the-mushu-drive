@@ -6,3 +6,49 @@ datasource db {
   provider = "postgresql"
   url      = env("DB_URI")
 }
+
+model User {
+  id            String     @id @db.VarChar(255)
+  firstname     String?    @db.VarChar(255)
+  lastname      String?    @db.VarChar(255)
+  username      String     @unique @db.VarChar(255)
+  password      String     @db.VarChar(255)
+  folders       Folder[] 
+  files         File[]
+  sharedFile    sharedFile[]
+
+  @@map("authenticated_users")
+}
+
+model Folder {
+  id            String @id @db.VarChar(255)
+  private       Boolean @default(true)
+  userId        String @db.VarChar(255)
+  user          User  @relation(fields: [userId], references: [id])
+  files         File[] 
+
+  @@map("folders")
+}
+
+model File {
+  id            String @id @db.VarChar(255)
+  private       Boolean @default(true)
+  userId        String @db.VarChar(255)
+  user          User  @relation(fields: [userId], references: [id])
+  folderId      String? @db.VarChar(255)
+  folder        Folder? @relation(fields: [folderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sharedFile    sharedFile[]
+  @@map("files")
+}
+
+model sharedFile {
+  id            String @id @db.VarChar(255)
+  link          String @unique @db.VarChar(255)
+  expiryDate    DateTime @db.Timestamp(6)
+  userId        String @db.VarChar(255)
+  user          User  @relation(fields: [userId], references: [id])
+  fileId        String @db.VarChar(255)
+  file          File  @relation(fields: [fileId], references: [id])
+
+  @@map("shared_file_links")
+}

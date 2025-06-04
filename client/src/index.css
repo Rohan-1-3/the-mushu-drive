@@ -46,3 +46,4 @@ button:focus-visible {
 }
 
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
