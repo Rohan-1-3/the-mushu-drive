@@ -1,13 +1,45 @@
 import express from "express";
 import dotenv from "dotenv"
 import { userRouters } from "./routes/userRouters.js";
+import { PrismaClient } from "@prisma/client";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 
 dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-app.use("/api/v1/user", userRouters)
+const prisma = new PrismaClient()
 
+app.use(cors({
+    origin: process.env.NODE_ENV === "production" ? "" : "http://localhost:5173",
+    credentials: true
+}))
+
+app.use(
+  expressSession({
+    cookie: {
+     maxAge: 7 * 24 * 60 * 60 * 1000
+    },
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    store: new PrismaSessionStore(
+      prisma,
+      {
+        checkPeriod: 2 * 60 * 1000,
+        dbRecordIdIsSessionId: true,
+        dbRecordIdFunction: undefined,
+      }
+    )
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(express.json());
+
+app.use("/api/v1/user", userRouters)
 
 app.use((err, req, res, next)=>{
     res.status(500).send({

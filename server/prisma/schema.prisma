@@ -52,3 +52,12 @@ model sharedFile {
 
   @@map("shared_file_links")
 }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.Text
+  expiresAt   DateTime
+
+  @@index([expiresAt])
+}
