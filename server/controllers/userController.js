@@ -1,7 +1,7 @@
 import { body } from "express-validator"
-import { validateRequest } from "../configs/validateRequest"
+import { validateRequest } from "../configs/validateRequest.js"
 import { hash } from "bcryptjs"
-import { PrismaClient } from "@prisma/client/extension"
+import { PrismaClient } from "@prisma/client"
 import expressAsyncHandler from "express-async-handler";
 import {v4 as uuid} from "uuid"
 
