@@ -6,7 +6,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-app.use("/api/user", userRouters)
+app.use("/api/v1/user", userRouters)
 
 
 app.use((err, req, res, next)=>{
