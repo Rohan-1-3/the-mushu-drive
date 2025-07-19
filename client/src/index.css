@@ -7,19 +7,23 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --color-primary-dark: #1f0322;
+  --color-primary-light: #c94bb8;
+  --color-secondary: #ce3f63;
 }
 
 html{
   font-size: 16px;
-  background-color: #d9d9d9;
+  background-color: var(--color-primary-light);
 }
 
 body {
   margin: auto;
   display: flex;
-  min-width: 320ox;
+  min-width: 320px;
   min-height: 100vh;
   max-width: 1400px;
+  overflow-x: hidden;
   border: .1rem dotted red;
 }
 
@@ -39,15 +43,27 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 @media (prefers-color-scheme: dark) {
   html{
-    background-color: #353535
+    background-color: var(--color-primary-dark)
   }
 }
 
 @import "tailwindcss";
 
 @theme{
-  --color-primary: "#1f0322";
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-light: var(--color-primary-light);
+  --color-secondary: var(--color-secondary);
+  --color-primary-op : #1f032286
 }
 

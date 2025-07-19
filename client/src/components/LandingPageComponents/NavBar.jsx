@@ -2,7 +2,7 @@ import React from 'react';
 
 function Navbar() {
     return (
-        <nav className="w-full px-6 py-4 bg-gray-900 text-white shadow-md sticky">
+        <nav className="w-full px-6 py-4 bg-primary bg-primary-dark  text-white shadow-lg sticky top-0 z-10">
             <div className="mx-auto flex justify-between items-center">
 
                 {/* Logo Section */}

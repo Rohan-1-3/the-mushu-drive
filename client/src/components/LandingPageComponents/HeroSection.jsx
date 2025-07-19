@@ -1,20 +1,18 @@
 import React from 'react';
 import CTAButton from './CTAButton';
-import { BackgroundBeamsWithCollision } from '../ui/background-beams-with-collision';
 
 function HeroSection() {
     return (
-        <BackgroundBeamsWithCollision>
-            <section className="w-full p-16 bg-white dark:bg-gray-900 ">
+            <section className="relative w-full p-16 bg-primary ">
             <div className="mx-auto flex flex-col-reverse md:flex-row items-center gap-12">
                 
                 {/* Text Content */}
                 <div className="flex-1 text-center md:text-left">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-primary-dark dark:text-white leading-tight">
                         Mushu Drive <br />
-                        <span className="text-pink-600">Power in Your Pocket</span>
+                        <span className="text-secondary">Power in Your Pocket</span>
                     </h1>
-                    <p className="mt-6 text-lg md:text-xl text-gray-600 dark:text-gray-300">
+                    <p className="mt-6 text-lg md:text-xl text-black dark:text-gray-300">
                         Compact, fast, and secure. Mini Drive makes storing and sharing your files effortless — all in a sleek, portable design that fits right in your pocket.
                     </p>
 
@@ -41,7 +39,7 @@ function HeroSection() {
                 </div>
             </div>
         </section>
-        </BackgroundBeamsWithCollision>
+
     );
 }
 
