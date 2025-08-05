@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import useMobileDetection from '../../hooks/useMobileDetection';
 
 function Navbar() {
@@ -33,9 +34,12 @@ function Navbar() {
 
                 {/* Desktop Login Button */}
                 <div className="hidden md:block">
-                    <button className="px-6 py-2 rounded-full border-2 border-accent2-dark text-sm text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105">
+                    <Link 
+                        to="/login"
+                        className="px-6 py-2 rounded-full border-2 border-accent2-dark text-sm text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105"
+                    >
                         LOGIN
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Mobile Hamburger Menu Button */}
@@ -92,12 +96,13 @@ function Navbar() {
 
                             {/* Mobile Login Button */}
                             <div className="p-6 border-t border-white/20 dark:border-white/10">
-                                <button
+                                <Link
+                                    to="/login"
                                     onClick={closeMobileMenu}
-                                    className="w-full px-6 py-3 rounded-full border-2 border-accent2-dark text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105"
+                                    className="block w-full px-6 py-3 rounded-full border-2 border-accent2-dark text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105 text-center"
                                 >
                                     LOGIN
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
