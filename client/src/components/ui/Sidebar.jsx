@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { sidebarItems } from '../../data';
 
 function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -6,16 +7,6 @@ function Sidebar() {
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
     };
-
-    const sidebarItems = [
-        { icon: '🏠', label: 'Home', href: '#' },
-        { icon: '📁', label: 'My Files', href: '#' },
-        { icon: '☁️', label: 'Cloud Storage', href: '#' },
-        { icon: '🔗', label: 'Shared Links', href: '#' },
-        { icon: '📊', label: 'Analytics', href: '#' },
-        { icon: '⚙️', label: 'Settings', href: '#' },
-        { icon: '❓', label: 'Help', href: '#' },
-    ];
 
     return (
         <>
