@@ -55,40 +55,34 @@ function Navbar() {
             {/* Mobile Menu Overlay */}
             {isMobile && (
                 <>
-                    {/* Backdrop */}
-                    <div 
-                        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-all duration-300 ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-                        onClick={closeMobileMenu}
-                    />
-
                     {/* Mobile Menu */}
                     <div className={`fixed top-full left-0 right-0 z-40 transform transition-all duration-300 ease-out ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
                         <div className="mx-6 mt-2 mb-4 bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-2xl overflow-hidden">
                             {/* Mobile Nav Links */}
                             <div className="py-2">
-                                <a 
-                                    href="#" 
+                                <a
+                                    href="#"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
                                     HOME
                                 </a>
-                                <a 
-                                    href="#" 
+                                <a
+                                    href="#"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
                                     ABOUT
                                 </a>
-                                <a 
-                                    href="#" 
+                                <a
+                                    href="#"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
                                     DRIVE
                                 </a>
-                                <a 
-                                    href="#" 
+                                <a
+                                    href="#"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
@@ -98,7 +92,7 @@ function Navbar() {
 
                             {/* Mobile Login Button */}
                             <div className="p-6 border-t border-white/20 dark:border-white/10">
-                                <button 
+                                <button
                                     onClick={closeMobileMenu}
                                     className="w-full px-6 py-3 rounded-full border-2 border-accent2-dark text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105"
                                 >
