@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+
 import FiveStars from '../ui/FiveStars';
 
 function ReviewCard({
@@ -6,58 +6,22 @@ function ReviewCard({
   text,
   value
 }) {
-  const containerRef = useRef(null);
-  const textRef = useRef(null);
-  const [scrollY, setScrollY] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [hovering, setHovering] = useState(false);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-
-    if (container && textEl) {
-      const containerHeight = container.offsetHeight;
-      const textHeight = textEl.scrollHeight;
-
-      const extra = textHeight - containerHeight;
-
-      if (extra > 0) {
-        setScrollY(extra);
-        const pixelsPerSecond = 30;
-        const newDuration = (extra / pixelsPerSecond) * 1000;
-        setDuration(newDuration);
-      } else {
-        setScrollY(0);
-        setDuration(0);
-      }
-    }
-  }, [text]);
 
   return (
     <div
-      className="flex flex-col flex-shrink-0 w-full sm:w-1/4 max-w-full 
-      rounded-2xl shadow-md p-6 mx-2 hover:shadow-lg duration-300 border border-secondary group
-      transform transition-transform 
-                hover:-translate-y-2 "
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
+      className="bg-white dark:bg-gray-800 backdrop-blur-sm p-4 md:p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl dark:hover:shadow-gray-500/20 transition-all duration-300 h-full flex flex-col justify-between min-h-[250px] md:min-h-[280px] w-full"
     >
-      <FiveStars value={value} />
-      <p className="font-semibold mt-2">{name}</p>
+      <div>
+        <FiveStars value={value} />
+        <p className="font-semibold mt-3 text-gray-800 dark:text-gray-200 text-base md:text-lg">{name}</p>
+      </div>
 
       {/* Review container */}
       <div
-        ref={containerRef}
-        className="relative overflow-hidden mt-2 h-[2rem] sm:h-[5.5em]"
+        className="mt-4 flex-1 flex items-center"
       >
         <div
-          ref={textRef}
-          className="italic text-white"
-          style={{
-            transform: `translateY(${hovering ? -scrollY : 0}px)`,
-            transition: hovering ? `transform ${duration}ms linear` : 'none',
-          }}
+          className="text-gray-600 dark:text-gray-300 italic leading-relaxed text-sm md:text-base"
         >
           "{text}"
         </div>

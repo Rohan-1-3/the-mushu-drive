@@ -1,8 +1,7 @@
-function CTAButton({ label = "Get Started", onClick, className = "" }) {
+function CTAButton({ label = "Get Started", className = "" }) {
     return (
         <button
-            onClick={onClick}
-            className={`inline-block px-6 py-3 rounded-lg text-white bg-secondary hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2 transition-all font-semibold shadow-md ${className}`}
+            className={`inline-block px-8 py-4 rounded-full text-white bg-gray-600 hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-offset-2 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 ${className}`}
         >
             {label}
         </button>

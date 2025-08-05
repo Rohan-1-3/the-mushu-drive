@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import AOS from 'aos';
 import HeroSection from '../components/LandingPageComponents/HeroSection';
 import FeaturesSection from '../components/LandingPageComponents/FeaturesSection';
 import ReviewsSection from '../components/LandingPageComponents/ReviewsSection';
@@ -7,8 +8,19 @@ import CTASection from '../components/LandingPageComponents/CTASection';
 import Navbar from '../components/LandingPageComponents/NavBar';
 
 function LandingPage() {
+    // Initialize AOS globally for the entire page
+    useEffect(() => {
+        AOS.init({ 
+            duration: 1000,
+            once: false,
+            offset: 50,
+            easing: 'ease-out-cubic',
+            disable: 'phone' // Disable on mobile for better performance
+        });
+    }, []);
+
     return (
-        <div className='dark: text-white'>
+        <div className='w-full min-h-screen text-black dark:text-white bg-white dark:bg-black'>
             <Navbar />
             <HeroSection />
             <FeaturesSection />

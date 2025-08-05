@@ -51,33 +51,39 @@ function FAQs() {
   };
 
   return (
-    <div className="px-4 max-w-4xl mx-auto text-xl">
-      <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-      <div className="space-y-4">
-        {miniDriveFAQs.map(faq => (
-          <div key={faq.id} className=" border-gray-300 border-b-1 rounded-sm p-4 hover:opacity-70">
-            <div
-              className={`flex justify-between items-center cursor-pointer ${
-                questionIdOpen === faq.id ? "opacity-70" : ""}`}
-              onClick={() => toggleQuestion(faq.id)}
-            >
-              <p className="font-medium">{faq.question}</p>
-              <span className="text-xl">{questionIdOpen === faq.id ? "-" : "+"}</span>
-            </div>
+    <section className="relative py-20 px-6 overflow-hidden bg-white dark:bg-black">
+      {/* Simple decorative elements */}
+      <div className="absolute top-20 left-10 w-72 h-72 rounded-full opacity-15 blur-3xl bg-gray-600"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full opacity-15 blur-3xl bg-gray-600"></div>
+      
+      <div className="relative z-10 max-w-4xl mx-auto text-xl">
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-black dark:text-white">Frequently Asked Questions</h2>
+        <div className="space-y-4">
+          {miniDriveFAQs.map(faq => (
+            <div key={faq.id} className="bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300">
+              <div
+                className={`flex justify-between items-center cursor-pointer ${
+                  questionIdOpen === faq.id ? "opacity-70" : ""}`}
+                onClick={() => toggleQuestion(faq.id)}
+              >
+                <p className="font-medium text-gray-800 dark:text-gray-200">{faq.question}</p>
+                <span className="text-xl font-bold text-gray-800 dark:text-gray-200">{questionIdOpen === faq.id ? "-" : "+"}</span>
+              </div>
 
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out transform ${
-                questionIdOpen === faq.id
-                  ? "max-h-40 opacity-100 scale-100 translate-y-0"
-                  : "max-h-0 opacity-0 scale-95 -translate-y-1"
-              }`}
-            >
-              <p className="mt-2 text-secondary">{faq.answer}</p>
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out transform ${
+                  questionIdOpen === faq.id
+                    ? "max-h-40 opacity-100 scale-100 translate-y-0"
+                    : "max-h-0 opacity-0 scale-95 -translate-y-1"
+                }`}
+              >
+                <p className="mt-4 text-gray-600 dark:text-gray-400">{faq.answer}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 

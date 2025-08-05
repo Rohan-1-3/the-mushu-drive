@@ -7,30 +7,25 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --color-primary-dark: #1f0322;
-  --color-primary-light: #c94bb8;
-  --color-secondary: #ce3f63;
 }
 
 html{
   font-size: 16px;
-  background-color: var(--color-primary-light);
+  background-color: white;
 }
 
 body {
-  margin: auto;
-  display: flex;
+  margin: 0;
   min-width: 320px;
   min-height: 100vh;
   max-width: 1400px;
+  margin: auto;
   overflow-x: hidden;
-  border: .1rem dotted red;
+  overflow-y: auto;
 }
 
 button {
-  border-radius: 0.5rem;
   border: 1px solid transparent;
-  padding: 0.6rem 1.2rem;
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
@@ -38,9 +33,10 @@ button {
   transition: border-color 0.25s;
 }
 
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 0px auto -webkit-focus-ring-color;
 }
 
 .scrollbar-hide {
@@ -54,16 +50,18 @@ button:focus-visible {
 
 @media (prefers-color-scheme: dark) {
   html{
-    background-color: var(--color-primary-dark)
+    background-color: black;
   }
 }
 
 @import "tailwindcss";
 
-@theme{
-  --color-primary-dark: var(--color-primary-dark);
-  --color-primary-light: var(--color-primary-light);
-  --color-secondary: var(--color-secondary);
-  --color-primary-op : #1f032286
+/* AOS Override Styles */
+[data-aos] {
+  pointer-events: none;
+}
+
+[data-aos].aos-animate {
+  pointer-events: auto;
 }
 

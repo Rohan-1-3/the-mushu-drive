@@ -2,7 +2,7 @@ function App() {
 
   return (
     <>
-      <div className='text-green-500 dark:text-red-500'>Hello this is light mode</div>
+      <div className='text-black dark:text-white bg-white dark:bg-black'>Hello this is light mode</div>
     </>
   )
 }
