@@ -76,18 +76,15 @@ function FeaturesSection() {
     const isMobile = useMobileDetection();
     
     return (
-        <section className="relative z-0 py-20 px-6 overflow-hidden bg-white dark:bg-black">
-            {/* Simple decorative elements */}
-            <div className="absolute top-20 left-10 w-72 h-72 rounded-full opacity-15 blur-3xl bg-gray-600"></div>
-            <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full opacity-15 blur-3xl bg-gray-600"></div>
+        <section className="relative z-0 py-20 px-6 overflow-hidden bg-bg-light dark:bg-bg-dark">
             
             <div className="relative z-10">
                 {/* Section header */}
                 <div className="text-center mb-16" data-aos="fade-up">
-                    <h2 className="text-5xl font-bold mb-4 text-black dark:text-white">
+                    <h2 className="text-5xl font-bold mb-4 text-text-light dark:text-text-dark">
                         Powerful Features
                     </h2>
-                    <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    <p className="text-xl text-text-light/70 dark:text-text-dark/70 max-w-2xl mx-auto">
                         Everything you need to store, share, and collaborate on your files with confidence and ease.
                     </p>
                 </div>

@@ -6,11 +6,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary-dark': '#1f0322',
-        'primary-light': '#c94bb8', 
-        'primary': '#c94bb8',
-        'secondary': '#ce3f63',
-        'primary-op': '#1f032286',
+        'primary': '#C94BB8',
+        'accent1': '#CE3F63',
+        'accent2-light': '#EAD9F2',
+        'accent2-dark': '#F0BCD4',
+        'bg-light': '#FEF7FB',
+        'bg-dark': '#120015',
+        'text-light': '#1A1A1A',
+        'text-dark': '#F6F6FF',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(ellipse at center, var(--tw-gradient-stops))',

@@ -11,7 +11,7 @@
 
 html{
   font-size: 16px;
-  background-color: white;
+  background-color: #FEF7FB;
 }
 
 body {
@@ -50,11 +50,22 @@ button:focus-visible {
 
 @media (prefers-color-scheme: dark) {
   html{
-    background-color: black;
+    background-color: #120015;
   }
 }
 
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #C94BB8;
+  --color-accent1: #CE3F63;
+  --color-accent2-light: #EAD9F2;
+  --color-accent2-dark: #F0BCD4;
+  --color-bg-light: #FEF7FB;
+  --color-bg-dark: #120015;
+  --color-text-light: #1A1A1A;
+  --color-text-dark: #F6F6FF;
+}
 
 /* AOS Override Styles */
 [data-aos] {

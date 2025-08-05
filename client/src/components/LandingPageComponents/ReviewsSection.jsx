@@ -100,10 +100,7 @@ function ReviewsSection() {
   };
 
   return (
-    <section className="relative py-20 px-6 overflow-hidden bg-gray-600 dark:bg-gray-800">
-      {/* Simple decorative elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 rounded-full opacity-25 blur-3xl bg-gray-500"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full opacity-25 blur-3xl bg-gray-400"></div>
+    <section className="relative py-20 px-6 overflow-hidden">
       
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Header */}
@@ -127,20 +124,20 @@ function ReviewsSection() {
             <>
               <button
                 onClick={prevSlide}
-                className="absolute left-0 md:left-0 top-1/2 -translate-y-1/2 z-20 bg-transparent hover:bg-white rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 group"
+                className="absolute left-0 md:left-0 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white backdrop-blur-sm rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 group"
                 aria-label="Previous reviews"
               >
-                <svg className="w-4 h-4 md:w-6 md:h-6 text-gray-600 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 md:w-6 md:h-6 text-white group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               
               <button
                 onClick={nextSlide}
-                className="absolute right-0 md:right-0 top-1/2 -translate-y-1/2 z-20 bg-transparent hover:bg-white rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 group"
+                className="absolute right-0 md:right-0 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white backdrop-blur-sm rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 group"
                 aria-label="Next reviews"
               >
-                <svg className="w-4 h-4 md:w-6 md:h-6 text-gray-600 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 md:w-6 md:h-6 text-white group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
@@ -188,8 +185,8 @@ function ReviewsSection() {
                   onClick={() => goToSlide(index)}
                   className={`px-3 py-1 rounded-full transition-all duration-200 ${
                     index === currentIndex
-                      ? 'bg-gray-800 scale-125'
-                      : 'bg-gray-300 hover:bg-gray-400'
+                      ? 'bg-white scale-125'
+                      : 'bg-white/50 hover:bg-white/80'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />

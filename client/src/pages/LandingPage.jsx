@@ -6,6 +6,7 @@ import ReviewsSection from '../components/LandingPageComponents/ReviewsSection';
 import FAQs from '../components/LandingPageComponents/FAQs';
 import CTASection from '../components/LandingPageComponents/CTASection';
 import Navbar from '../components/LandingPageComponents/NavBar';
+import Sidebar from '../components/ui/Sidebar';
 
 function LandingPage() {
     // Initialize AOS globally for the entire page
@@ -20,15 +21,16 @@ function LandingPage() {
     }, []);
 
     return (
-        <div className='w-full min-h-screen text-black dark:text-white bg-white dark:bg-black'>
+        <div className='w-full min-h-screen text-text-light dark:text-text-dark bg-bg-light dark:bg-bg-dark'>
+            {/* <Sidebar /> */}
             <Navbar />
             <HeroSection />
             <FeaturesSection />
             <ReviewsSection />
             <FAQs />
             <CTASection />
-            <footer className="text-center py-6 text-gray-500 mt-2 text-xl">
-                &copy; 2025 <a href="https://github.com/rohan-1-3/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Rohan-1-3</a>. All rights reserved.
+            <footer className="text-center py-6 text-text-light/60 dark:text-text-dark/60 mt-2 text-xl">
+                &copy; 2025 <a href="https://github.com/rohan-1-3/" target="_blank" rel="noopener noreferrer" className="text-primary dark:text-accent2-dark hover:underline">Rohan-1-3</a>. All rights reserved.
             </footer>
 
         </div>
