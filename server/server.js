@@ -5,7 +5,7 @@ import { userRouters } from "./routes/userRouters.js";
 import { PrismaClient } from "@prisma/client";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
-import passport from "passport";
+import passport from "./configs/passsportLocalConfigs.js";
 
 dotenv.config();
 const PORT = process.env.PORT;

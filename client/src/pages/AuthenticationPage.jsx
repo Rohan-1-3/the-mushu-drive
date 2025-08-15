@@ -86,25 +86,11 @@ function AuthenticationPage() {
                     <div className="relative min-h-[600px]">
                         {/* Login Form */}
                         <div 
-                            className={`absolute inset-0 transform transition-all duration-700 ease-in-out ${
-                                currentView === 'login' 
-                                    ? 'translate-x-0 opacity-100 scale-100' 
-                                    : '-translate-x-full opacity-0 scale-95 pointer-events-none'
-                            }`}
+                            className={`absolute inset-0 transform transition-all duration-700 ease-in-out`}
                         >
-                            <LoginPage />
+                            {currentView === 'login' ? <LoginPage /> : <RegisterPage />}
                         </div>
                         
-                        {/* Register Form */}
-                        <div 
-                            className={`absolute inset-0 transform transition-all duration-700 ease-in-out ${
-                                currentView === 'register' 
-                                    ? 'translate-x-0 opacity-100 scale-100' 
-                                    : 'translate-x-full opacity-0 scale-95 pointer-events-none'
-                            }`}
-                        >
-                            <RegisterPage />
-                        </div>
                     </div>
                 </div>
             </div>

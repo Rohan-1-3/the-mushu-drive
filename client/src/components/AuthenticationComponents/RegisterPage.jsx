@@ -12,6 +12,8 @@ function RegisterPage() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [passwordMatch, setPasswordMatch] = useState(true);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -105,7 +107,7 @@ function RegisterPage() {
                                 onChange={handleInputChange}
                                 required
                                 className="w-full px-4 pt-6 pb-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 peer"
-                                placeholder="First Name"
+                                placeholder=""
                                 id="firstName"
                             />
                             <label
@@ -125,7 +127,7 @@ function RegisterPage() {
                                 onChange={handleInputChange}
                                 required
                                 className="w-full px-4 pt-6 pb-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 peer"
-                                placeholder="Last Name"
+                                placeholder=""
                                 id="lastName"
                             />
                             <label
@@ -146,7 +148,7 @@ function RegisterPage() {
                             onChange={handleInputChange}
                             required
                             className="w-full px-4 pt-6 pb-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 peer"
-                            placeholder="Email Address"
+                            placeholder=""
                             id="email"
                         />
                         <label
@@ -160,13 +162,13 @@ function RegisterPage() {
                     {/* Password Field */}
                     <div className="relative">
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             name="password"
                             value={formData.password}
                             onChange={handleInputChange}
                             required
-                            className="w-full px-4 pt-6 pb-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 peer"
-                            placeholder="Password"
+                            className="w-full px-4 pt-6 pb-2 pr-12 bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 peer"
+                            placeholder=""
                             id="password"
                         />
                         <label
@@ -175,22 +177,38 @@ function RegisterPage() {
                         >
                             Password
                         </label>
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-4 text-text-light/50 dark:text-text-dark/50 hover:text-text-light dark:hover:text-text-dark transition-colors duration-300"
+                        >
+                            {showPassword ? (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            )}
+                        </button>
                     </div>
 
                     {/* Confirm Password Field */}
                     <div className="relative">
                         <input
-                            type="password"
+                            type={showConfirmPassword ? "text" : "password"}
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={handleInputChange}
                             required
-                            className={`w-full px-4 pt-6 pb-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm border rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none transition-all duration-300 peer ${
+                            className={`w-full px-4 pt-6 pb-2 pr-12 bg-white/10 dark:bg-black/20 backdrop-blur-sm border rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none transition-all duration-300 peer ${
                                 passwordMatch 
                                     ? 'border-white/30 dark:border-white/20 focus:ring-2 focus:ring-primary focus:border-primary' 
                                     : 'border-red-500 focus:ring-2 focus:ring-red-500 focus:border-red-500'
                             }`}
-                            placeholder="Confirm Password"
+                            placeholder=""
                             id="confirmPassword"
                         />
                         <label
@@ -203,6 +221,22 @@ function RegisterPage() {
                         >
                             Confirm Password
                         </label>
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-4 top-4 text-text-light/50 dark:text-text-dark/50 hover:text-text-light dark:hover:text-text-dark transition-colors duration-300"
+                        >
+                            {showConfirmPassword ? (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            )}
+                        </button>
                         {!passwordMatch && formData.confirmPassword && (
                             <p className="mt-1 text-xs text-red-500">Passwords do not match</p>
                         )}
@@ -224,9 +258,6 @@ function RegisterPage() {
                         )}
                     </button>
                 </form>
-
-
-                {/* OAuth Buttons */}
 
                 {/* Login Link */}
                 <div className="mt-6 text-center">

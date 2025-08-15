@@ -4,6 +4,7 @@ import { hash } from "bcryptjs"
 import { PrismaClient } from "@prisma/client"
 import expressAsyncHandler from "express-async-handler";
 import {v4 as uuid} from "uuid"
+import passport from "../configs/passsportLocalConfigs.js";
 
 const prisma = new PrismaClient();
 
@@ -21,7 +22,7 @@ const validateUserCredentials = [
     .isLength({min: 4, max: 16}).withMessage("Username length to be between 4 and 16.")
     .escape(),
     body("password").trim().notEmpty().withMessage("Password cannot be empty").bail()
-    .isLength({min: 8 }).withMessage("Password length to be between 8 and 16.")
+    .isLength({min: 8, max: 128}).withMessage("Password length to be between 8 and 128.")
     .escape()
 ]
 
@@ -39,6 +40,20 @@ export const registerUser= [
     validateUserName, validateUserCredentials,
     validateRequest, expressAsyncHandler(async (req, res)=>{
         const {firstname, lastname, username, password } = req.body
+        
+        // Check if username already exists
+        const existingUser = await prisma.user.findUnique({
+            where: { username: username }
+        });
+        
+        if(existingUser) {
+            return res.status(400).json({
+                err: [{
+                    msg: "Username already exists"
+                }]
+            });
+        }
+        
         const hashedPass = await hash(password, 16);
         const createdUser= await prisma.user.create({
             data:{
@@ -63,7 +78,7 @@ export const loginUser = [validateUserCredentials, validateRequest,
                 if (err) return next(err);
                 res.status(200).json({
                     message: 'Login successful',
-                    user
+                    ...user
                 });
             });
         })(req, res, next);
@@ -85,11 +100,11 @@ export const logoutUser = expressAsyncHandler((req, res, next)=>{
 
 export const authenticateUser = (req, res, next)=>{
     if(req.isAuthenticated()){
-        res.status(400).json({
+        return res.status(200).json({
             message: "User authenticated"
         })
     }
-    res.status(400).json({
+    res.status(401).json({
         message: "User is not authenticated"
     })
 }
@@ -101,7 +116,7 @@ export const updateUser = [
             where: { id: req.body.id }
         });
         if(!existingUser){
-            res.status(400).json({
+            return res.status(400).json({
                 err: {
                     msg: "No such user exists."
                 }
@@ -111,7 +126,7 @@ export const updateUser = [
         let updatedUser;
         if (Object.keys(changes).length > 0) {
             updatedUser = await prisma.user.update({
-                where: { id: userId },
+                where: { id: req.body.id },
                 data: changes
             });
         }
