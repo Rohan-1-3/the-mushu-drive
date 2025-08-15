@@ -14,6 +14,19 @@ html{
   background-color: #FEF7FB;
 }
 
+/* Responsive root font sizing
+  Adjusting rem scaling so spacing & typography shrink slightly on smaller screens.
+  Tailwind uses rem for most utilities, so this cascades globally.
+  Tweak values to taste; changes kept subtle (<25%) to avoid layout jumps. */
+@media (max-width: 1536px) { html { font-size: 15.5px; } }
+@media (max-width: 1280px) { html { font-size: 15px; } }
+@media (max-width: 1024px) { html { font-size: 14.5px; } }
+@media (max-width: 900px)  { html { font-size: 14px; } }
+@media (max-width: 768px)  { html { font-size: 13.5px; } }
+@media (max-width: 640px)  { html { font-size: 13px; } }
+@media (max-width: 480px)  { html { font-size: 12.5px; } }
+@media (max-width: 380px)  { html { font-size: 12px; } }
+
 body {
   margin: 0;
   min-width: 320px;

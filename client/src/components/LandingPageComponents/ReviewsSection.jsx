@@ -71,21 +71,21 @@ function ReviewsSection() {
   };
 
   return (
-    <section className="relative py-20 px-6 overflow-hidden">
-      
+    <section className="relative py-20 px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-bg-light via-bg-light dark:from-bg-dark dark:via-bg-dark">
+
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+        <div className="text-center mb-10 md:mb-14">
+          <h2 className="text-4xl md:text-5xl font-bold text-text-light dark:text-text-dark mb-4">
             What Our Users Say
           </h2>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto px-4">
+          <p className="text-lg md:text-xl text-text-light/70 dark:text-text-dark/70 max-w-2xl mx-auto px-4">
             Join thousands of satisfied users who trust Mini Drive for their storage needs
           </p>
         </div>
 
         {/* Carousel Container */}
-        <div 
+        <div
           className="relative"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
@@ -102,7 +102,7 @@ function ReviewsSection() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              
+
               <button
                 onClick={nextSlide}
                 className="absolute right-0 md:right-0 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white backdrop-blur-sm rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 group"
@@ -116,10 +116,10 @@ function ReviewsSection() {
           )}
 
           {/* Carousel Track */}
-          <div className="overflow-hidden rounded-2xl mx-4 md:mx-12">
-            <div 
+          <div className="overflow-x-hidden rounded-2xl p-2 sm:px-4 md:px-8 lg:px-12">
+            <div
               ref={carouselRef}
-              className="flex transition-transform duration-500 ease-in-out"
+              className="flex items-stretch transition-transform duration-500 ease-in-out"
               style={{
                 transform: `translate3d(-${currentIndex * (100 / cardsPerView)}%, 0, 0)`,
                 width: '100%',
@@ -130,8 +130,8 @@ function ReviewsSection() {
               {reviews.map((review, index) => (
                 <div
                   key={`${review.name}-${index}`}
-                  className="flex-shrink-0 flex-grow-0 px-2 md:px-3"
-                  style={{ 
+                  className="flex-shrink-0 flex-grow-0 px-2 sm:px-3 md:px-4"
+                  style={{
                     width: `${100 / cardsPerView}%`,
                     minWidth: `${100 / cardsPerView}%`,
                     maxWidth: `${100 / cardsPerView}%`,
@@ -139,7 +139,7 @@ function ReviewsSection() {
                     transform: 'translateZ(0)'
                   }}
                 >
-                  <div className="h-full">
+                  <div className="h-full flex">
                     <ReviewCard {...review} />
                   </div>
                 </div>
@@ -149,16 +149,15 @@ function ReviewsSection() {
 
           {/* Pagination Dots */}
           {maxIndex > 0 && (
-            <div className="flex justify-center space-x-2 mt-8">
+            <div className="flex justify-center flex-wrap gap-2 mt-10">
               {Array.from({ length: maxIndex + 1 }, (_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`px-3 py-1 rounded-full transition-all duration-200 ${
-                    index === currentIndex
-                      ? 'bg-white scale-125'
-                      : 'bg-white/50 hover:bg-white/80'
-                  }`}
+                  className={`h-2.5 w-7 rounded-full transition-all duration-300 ${index === currentIndex
+                      ? 'bg-primary shadow-md'
+                      : 'bg-text-light/20 dark:bg-text-dark/20 hover:bg-text-light/40 dark:hover:bg-text-dark/40'
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}

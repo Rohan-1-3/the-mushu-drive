@@ -1,30 +1,20 @@
 
 import FiveStars from '../ui/FiveStars';
 
-function ReviewCard({
-  name,
-  text,
-  value
-}) {
-
+function ReviewCard({ name, text, value }) {
   return (
-    <div
-      className="bg-accent2-light dark:bg-bg-dark backdrop-blur-sm p-4 md:p-6 rounded-2xl shadow-lg border border-accent2-dark dark:border-accent1 hover:scale-105 hover:shadow-xl dark:hover:shadow-accent1/20 transition-all duration-300 h-full flex flex-col justify-between min-h-[250px] md:min-h-[280px] w-full"
-    >
-      <div>
+    <div className="group relative bg-accent2-light/90 dark:bg-white/5 backdrop-blur-sm p-4 sm:p-5 md:p-6 rounded-2xl shadow-lg border border-accent2-dark/60 dark:border-white/10 transition-all duration-300 flex flex-col w-full h-full hover:scale-105">
+      {/* Top (Stars + Name) */}
+      <div className="flex flex-col gap-2 mb-3">
         <FiveStars value={value} />
-        <p className="font-semibold mt-3 text-text-light dark:text-text-dark text-base md:text-lg">{name}</p>
+        <p className="font-semibold tracking-wide text-text-light dark:text-text-dark text-sm sm:text-base md:text-lg">{name}</p>
       </div>
 
-      {/* Review container */}
-      <div
-        className="flex-1 flex items-center"
-      >
-        <div
-          className="text-text-light/80 dark:text-text-dark/80 italic leading-relaxed text-sm md:text-base"
-        >
+      {/* Review Text (auto height) */}
+      <div className="flex-1">
+        <p className="text-text-light/80 dark:text-text-dark/80 italic leading-relaxed text-sm md:text-base">
           "{text}"
-        </div>
+        </p>
       </div>
     </div>
   );

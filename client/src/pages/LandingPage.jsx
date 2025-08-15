@@ -29,9 +29,6 @@ function LandingPage() {
             <ReviewsSection />
             <FAQs />
             <CTASection />
-            <footer className="text-center py-6 text-text-light/60 dark:text-text-dark/60 mt-2 text-xl">
-                &copy; 2025 <a href="https://github.com/rohan-1-3/" target="_blank" rel="noopener noreferrer" className="text-primary dark:text-accent2-dark hover:underline">Rohan-1-3</a>. All rights reserved.
-            </footer>
 
         </div>
     );
