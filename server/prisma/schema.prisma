@@ -32,12 +32,18 @@ model Folder {
 
 model File {
   id            String @id @db.VarChar(255)
+  name          String @db.VarChar(255)
+  size          Int
+  mimetype      String @db.VarChar(100)
+  buffer        Bytes
   private       Boolean @default(true)
   userId        String @db.VarChar(255)
   user          User  @relation(fields: [userId], references: [id])
   folderId      String? @db.VarChar(255)
   folder        Folder? @relation(fields: [folderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   sharedFile    sharedFile[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   @@map("files")
 }
 
