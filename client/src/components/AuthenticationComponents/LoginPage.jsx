@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authApi } from '../../lib/api.js';
 
 function LoginPage() {
     const [formData, setFormData] = useState({
-        email: '',
+        username: '',
         password: ''
     });
 
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -22,13 +25,15 @@ function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
         
-        // Add your login logic here
-        console.log('Login data:', formData);
-        
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            setError(null);
+            await authApi.login({ username: formData.username, password: formData.password });
+            navigate('/app');
+        } catch (e) {
+            setError(e.message);
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     };
 
     return (
@@ -43,23 +48,23 @@ function LoginPage() {
 
                 {/* Login Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Email Field */}
+            {/* Username Field */}
                     <div className="relative">
                         <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
+                type="text"
+                name="username"
+                value={formData.username}
                             onChange={handleInputChange}
                             required
                             className="w-full px-4 pt-6 pb-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 peer"
                             placeholder=""
-                            id="email"
+                id="username"
                         />
                         <label
-                            htmlFor="email"
+                htmlFor="username"
                             className="absolute left-4 top-2 text-xs text-text-light/60 dark:text-text-dark/60 transition-all duration-300 peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-placeholder-shown:text-text-light/50 peer-placeholder-shown:dark:text-text-dark/50 peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary dark:peer-focus:text-accent2-dark font-medium"
                         >
-                            Email Address
+                Username
                         </label>
                     </div>
 
@@ -99,15 +104,7 @@ function LoginPage() {
                         </button>
                     </div>
 
-                    {/* Forgot Password Link */}
-                    <div className="text-right">
-                        <Link 
-                            to="/forgot-password" 
-                            className="text-sm text-primary dark:text-accent2-dark hover:underline transition-colors duration-300"
-                        >
-                            Forgot your password?
-                        </Link>
-                    </div>
+                    {error && <div className="text-sm text-red-400">{error}</div>}
 
                     {/* Submit Button */}
                     <button

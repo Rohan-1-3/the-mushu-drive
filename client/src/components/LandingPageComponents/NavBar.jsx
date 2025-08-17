@@ -15,7 +15,7 @@ function Navbar() {
     };
 
     return (
-        <nav className="w-full px-6 py-4 shadow-lg sticky top-0 z-50 backdrop-blur-md bg-white/10 dark:bg-black/10 border-b border-white/20 dark:border-white/10">
+        <nav className="w-full px-6 py-4 shadow-lg sticky top-0 z-50 backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
             <div className="relative z-10 mx-auto flex justify-between items-center">
 
                 {/* Logo Section */}
@@ -36,7 +36,7 @@ function Navbar() {
                 <div className="hidden md:block">
                     <Link 
                         to="/login"
-                        className="px-6 py-2 rounded-full border-2 border-accent2-dark text-sm text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105"
+                        className="px-6 py-2 rounded-full border-1 border-accent2-dark text-sm text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105"
                     >
                         LOGIN
                     </Link>
@@ -99,7 +99,7 @@ function Navbar() {
                                 <Link
                                     to="/login"
                                     onClick={closeMobileMenu}
-                                    className="block w-full px-6 py-3 rounded-full border-2 border-accent2-dark text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105 text-center"
+                                    className="block w-full px-6 py-3 rounded-full border-1 border-accent2-dark text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105 text-center"
                                 >
                                     LOGIN
                                 </Link>

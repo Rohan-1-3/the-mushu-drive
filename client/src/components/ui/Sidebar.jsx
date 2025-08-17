@@ -30,7 +30,7 @@ function Sidebar() {
             />
 
             {/* Sidebar */}
-            <aside className={`fixed top-0 left-0 z-[52] h-full w-80 transform transition-all duration-300 ease-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`fixed top-0 left-0 z-[52] h-full w-80 transform transition-all duration-100 ease-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 {/* Glassmorphism Container */}
                 <div className="h-full bg-white/10 dark:bg-black/20 backdrop-blur-xl border-r border-white/20 dark:border-white/10 shadow-2xl">
                     {/* Header */}

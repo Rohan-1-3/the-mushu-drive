@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { authApi } from '../../lib/api';
 
 function RegisterPage() {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
-        email: '',
+        username: '',
         password: '',
         confirmPassword: ''
     });
@@ -14,6 +15,7 @@ function RegisterPage() {
     const [passwordMatch, setPasswordMatch] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -39,9 +41,22 @@ function RegisterPage() {
         }
 
         setIsLoading(true);
-        
-        // Add your registration logic here
-        console.log('Registration data:', formData);
+
+        try {
+            await authApi.register({
+                username: formData.username,
+                password: formData.password,
+                firstname: formData.firstName,
+                lastname: formData.lastName
+            });
+            navigate('/login');
+            // Handle successful registration (e.g., redirect or show a success message)
+        } catch (error) {
+            // Handle registration error (e.g., show an error message)
+            console.error('Registration error:', error);
+        } finally {
+            setIsLoading(false);
+        }
         
         // Simulate API call
         setTimeout(() => {
@@ -139,23 +154,22 @@ function RegisterPage() {
                         </div>
                     </div>
 
-                    {/* Email Field */}
                     <div className="relative">
                         <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
+                            type="text"
+                            name="username"
+                            value={formData.username}
                             onChange={handleInputChange}
                             required
                             className="w-full px-4 pt-6 pb-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/20 rounded-xl text-text-light dark:text-text-dark placeholder-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300 peer"
                             placeholder=""
-                            id="email"
+                            id="username"
                         />
                         <label
-                            htmlFor="email"
+                            htmlFor="username"
                             className="absolute left-4 top-2 text-xs text-text-light/60 dark:text-text-dark/60 transition-all duration-300 peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-placeholder-shown:text-text-light/50 peer-placeholder-shown:dark:text-text-dark/50 peer-focus:top-2 peer-focus:text-xs peer-focus:text-primary dark:peer-focus:text-accent2-dark font-medium"
                         >
-                            Email Address
+                            Username
                         </label>
                     </div>
 

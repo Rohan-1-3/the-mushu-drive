@@ -22,7 +22,6 @@ function LandingPage() {
 
     return (
         <div className='w-full min-h-screen text-text-light dark:text-text-dark bg-bg-light dark:bg-bg-dark'>
-            {/* <Sidebar /> */}
             <Navbar />
             <HeroSection />
             <FeaturesSection />

@@ -40,7 +40,7 @@ export const registerUser = [
     validateUserName, validateUserCredentials,
     validateRequest, expressAsyncHandler(async (req, res) => {
         const { firstname, lastname, username, password } = req.body
-
+        
         // Check if username already exists
         const existingUser = await prisma.user.findUnique({
             where: { username: username }
