@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changeFileName, deleteMultipleFiles, deleteSingleFile, getAllFiles, getSingleFile, uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
+import { changeFileName, deleteMultipleFiles, deleteSingleFile, getAllFiles, getFileDownloadUrl, getSingleFile, uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
 import { isOwner, requireAuth } from "../configs/auth.js";
 
 export const fileRouter = new Router();
@@ -11,6 +11,8 @@ fileRouter.post("/upload-multiple", requireAuth, uploadMultipleFiles);
 // // read
 fileRouter.get("/m/0", requireAuth, getAllFiles);
 fileRouter.get("/m/:id", requireAuth, getSingleFile)
+// // download
+fileRouter.get("/m/:id/download", requireAuth, getFileDownloadUrl)
 // // update name
 fileRouter.put("/m/:id", requireAuth, isOwner, changeFileName)
 // // delete
@@ -21,8 +23,6 @@ fileRouter.delete("/m/:id", requireAuth, isOwner, deleteSingleFile)
 // fileRouter.post("/m/:id/share", requireAuth)
 // // revoke share access
 // fileRouter.delete("/m/:id/share", requireAuth)
-// // download
-// fileRouter.get("/m/:id/download", requireAuth)
 
 // // folder operations
 // fileRouter.post("/folders", requireAuth);

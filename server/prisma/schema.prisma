@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DB_URI")
+  url      = env("NEON_DB_URI")
 }
 
 model User {
@@ -35,7 +35,8 @@ model File {
   name          String @db.VarChar(255)
   size          Int
   mimetype      String @db.VarChar(100)
-  buffer        Bytes
+  url           String @db.Text // Supabase file URL
+  supabasePath  String @db.Text // Path in Supabase storage
   private       Boolean @default(true)
   userId        String @db.VarChar(255)
   user          User  @relation(fields: [userId], references: [id])
