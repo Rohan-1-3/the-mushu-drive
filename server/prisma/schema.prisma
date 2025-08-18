@@ -38,7 +38,7 @@ model Folder {
 
 model File {
   id            String @id @db.VarChar(255)
-  name          String @db.VarChar(255)
+  name          String @db.VarChar(255) @unique
   size          Int
   mimetype      String @db.VarChar(100)
   url           String @db.Text // Supabase file URL
