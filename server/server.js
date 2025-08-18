@@ -7,6 +7,7 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
 import passport from "./configs/passsportLocalConfigs.js";
 import { fileRouter } from "./routes/fileRouter.js";
+import { folderRouter }from "./routes/folderRouter.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
@@ -47,6 +48,7 @@ app.use(express.json());
 
 app.use("/api/v1/user", userRouters)
 app.use("/api/v1/files", fileRouter);
+app.use("/api/v1/folders", folderRouter);
 
 app.use((err, req, res, next)=>{
     res.status(500).send({

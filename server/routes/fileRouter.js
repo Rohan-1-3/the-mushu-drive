@@ -24,15 +24,3 @@ fileRouter.delete("/m/:id", requireAuth, isOwner, deleteSingleFile)
 // // revoke share access
 // fileRouter.delete("/m/:id/share", requireAuth)
 
-// // folder operations
-// fileRouter.post("/folders", requireAuth);
-
-// fileRouter.get("/folders/:id", requireAuth);
-// fileRouter.get("/folders/:id/files", requireAuth);
-
-// fileRouter.put("/folders/:id", requireAuth);
-
-// fileRouter.delete("/folders/:id", requireAuth);
-
-// fileRouter.post("/folders/:id/share", requireAuth);
-// fileRouter.delete("/folders/:id/share", requireAuth);

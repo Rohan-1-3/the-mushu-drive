@@ -26,7 +26,13 @@ model Folder {
   userId        String @db.VarChar(255)
   user          User  @relation(fields: [userId], references: [id])
   files         File[] 
-
+  name          String @db.VarChar(255) @unique
+  parentId      String? @db.VarChar(255)
+  parent        Folder? @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  subfolders    Folder[] @relation("FolderHierarchy")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
   @@map("folders")
 }
 
