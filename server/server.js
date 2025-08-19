@@ -16,7 +16,7 @@ const app = express();
 const prisma = new PrismaClient()
 
 app.use(cors({
-    origin: process.env.NODE_ENV === "production" ? "" : "http://localhost:5173",
+    origin: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL_DEV,
     credentials: true
 }))
 
