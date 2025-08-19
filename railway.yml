@@ -1,0 +1,21 @@
+version: "2"
+services:
+  web:
+    name: mushu-drive-api
+    source:
+      image: node:18-alpine
+    build:
+      buildCommand: |
+        npm install
+        cd server && npm install
+        cd ../client && npm install && npm run build
+        cd ../server && npm run build
+    startCommand: cd server && npm start
+    variables:
+      NODE_ENV: production
+    healthcheck:
+      path: /
+      port: 3000
+    volumes:
+      - name: uploads
+        mountPath: /app/server/uploads
