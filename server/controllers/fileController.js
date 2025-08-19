@@ -3,6 +3,7 @@ import multer from "multer";
 import { v4 as uuid } from "uuid";
 import { PrismaClient } from "@prisma/client";
 import { supabase, generateFilePath } from "../configs/supabase.js";
+import { generateUniqueFileName } from "../utils/nameResolution.js";
 
 const prisma = new PrismaClient();
 
@@ -19,7 +20,15 @@ const uploadMultiple = upload.array("files", 3);
 
 const fileUpload = async (file, fileConfigs) => {
     const fileId = uuid();
-    const filePath = generateFilePath(fileConfigs.userId, file.originalname);
+    
+    // Generate unique filename to handle duplicates
+    const uniqueFileName = await generateUniqueFileName(
+        file.originalname, 
+        fileConfigs.userId, 
+        fileConfigs.folderId
+    );
+    
+    const filePath = generateFilePath(fileConfigs.userId, uniqueFileName);
     
     try {
         // Upload file to Supabase Storage
@@ -52,7 +61,7 @@ const fileUpload = async (file, fileConfigs) => {
         return await prisma.file.create({
             data: {
                 id: fileId,
-                name: file.originalname,
+                name: uniqueFileName, // Use the unique filename
                 size: file.size,
                 mimetype: file.mimetype,
                 url: urlData.publicUrl,
@@ -238,17 +247,37 @@ export const getAllFiles = expressAsyncHandler(async (req, res, next)=>{
 export const changeFileName = expressAsyncHandler(async (req, res, next) => {
     const fileId = req.params.id;
     const newName = req.body.name;
+    const userId = req.user.id;
+
+    // First get the current file to check ownership and get folder context
+    const currentFile = await prisma.file.findFirst({
+        where: { 
+            id: fileId,
+            userId: userId 
+        }
+    });
+
+    if (!currentFile) {
+        return res.status(404).json({
+            error: "File not found or you don't have permission to rename it"
+        });
+    }
+
+    // Generate unique name in case of duplicates
+    const uniqueName = await generateUniqueFileName(newName, userId, currentFile.folderId);
 
     const file = await prisma.file.update({
         where: { id: fileId },
-        data: { name: newName }
+        data: { name: uniqueName }
     });
 
     if(file){
         return res.status(200).json({
-            newName,
+            newName: uniqueName,
             fileId,
-            message: "File name updated successfully"
+            message: uniqueName !== newName 
+                ? `File renamed to "${uniqueName}" to avoid conflicts`
+                : "File name updated successfully"
         });
     }
 

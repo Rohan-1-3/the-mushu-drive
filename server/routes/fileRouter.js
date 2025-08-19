@@ -14,10 +14,10 @@ fileRouter.get("/m/:id", requireAuth, getSingleFile)
 // // download
 fileRouter.get("/m/:id/download", requireAuth, getFileDownloadUrl)
 // // update name
-fileRouter.put("/m/:id", requireAuth, isOwner, changeFileName)
+fileRouter.put("/m/:id", requireAuth, changeFileName)
 // // delete
-fileRouter.delete("/m/delete-multiple", requireAuth, isOwner, deleteMultipleFiles)
-fileRouter.delete("/m/:id", requireAuth, isOwner, deleteSingleFile)
+fileRouter.delete("/m/delete-multiple", requireAuth, deleteMultipleFiles)
+fileRouter.delete("/m/:id", requireAuth, deleteSingleFile)
 
 // // share file
 // fileRouter.post("/m/:id/share", requireAuth)

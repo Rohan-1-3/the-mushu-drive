@@ -9,9 +9,9 @@ function Sidebar({ onLogout }) {
     };
 
     return (
-        <aside className={`bg-white/10 dark:bg-black/20 backdrop-blur-xl border-r border-white/20 dark:border-white/10 shadow-2xl transition-all duration-300 ease-in-out ${isOpen ? 'w-80' : 'w-16'
+        <aside className={`h-screen sticky top-0 bg-white/10 dark:bg-black/20 backdrop-blur-xl border-r border-white/20 dark:border-white/10 shadow-2xl transition-all duration-300 ease-in-out ${isOpen ? 'w-80' : 'w-16'
             }`}>
-            <div className="h-full flex flex-col">
+            <div className="h-screen flex flex-col">
                 {/* Header */}
                 <div className="p-4 border-white/20 dark:border-white/10">
                     <div className="flex items-center space-x-3">

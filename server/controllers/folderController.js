@@ -3,6 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import { v4 as uuid } from "uuid";
 import { validateRequest } from "../configs/validateRequest.js";
 import { body } from "express-validator";
+import { generateUniqueFolderName } from "../utils/nameResolution.js";
 
 const prisma = new PrismaClient();
 
@@ -12,9 +13,9 @@ const validateFolderName = [
         .escape()
 ]
 
-const validateParentId = [
-    body("parentId").optional().isUUID().withMessage("Parent ID must be a valid UUID")
-]
+// const validateParentId = [
+//     body("parentId").optional().isUUID().withMessage("Parent ID must be a valid UUID")
+// ]
 
 const updateFolderHierarchyTimestamps = async (folderId, userId) => {
     if (!folderId) return;
@@ -77,7 +78,7 @@ const forceDeleteFolderContentsWithTransaction = async (folderId, userId, tx) =>
 };
 
 export const createFolder = [
-    validateFolderName, validateParentId, validateRequest, expressAsyncHandler(async (req, res) => {
+    validateFolderName, validateRequest, expressAsyncHandler(async (req, res) => {
         const { folderName, parentId } = req.body
         const folderId = uuid();
         const userId = req.user.id
@@ -98,11 +99,14 @@ export const createFolder = [
             }
         }
 
+        // Generate unique folder name to handle duplicates
+        const uniqueFolderName = await generateUniqueFolderName(folderName, userId, parentId);
+
         const folder = await prisma.folder.create({
             data: {
                 id: folderId,
                 userId: userId,
-                name: folderName,
+                name: uniqueFolderName,
                 parentId: parentId || null
             }
         })
@@ -121,7 +125,9 @@ export const createFolder = [
 
             return res.status(200).json({
                 ...folder,
-                message: "Folder creation was successful."
+                message: uniqueFolderName !== folderName 
+                    ? `Folder created as "${uniqueFolderName}" to avoid conflicts`
+                    : "Folder creation was successful."
             })
         }
 
@@ -239,16 +245,21 @@ export const updateFolder = [
             });
         }
 
+        // Generate unique folder name to handle duplicates
+        const uniqueFolderName = await generateUniqueFolderName(folderName, userId, existingFolder.parentId);
+
         const updatedFolder = await prisma.folder.update({
             where: { id: folderId },
-            data: { name: folderName }
+            data: { name: uniqueFolderName }
         });
 
         await updateFolderHierarchyTimestamps(folderId, userId); // Update timestamps for all parent folders
         
         return res.status(200).json({
             ...updatedFolder,
-            message: "Folder updated successfully."
+            message: uniqueFolderName !== folderName 
+                ? `Folder renamed to "${uniqueFolderName}" to avoid conflicts`
+                : "Folder updated successfully."
         });
     })
 ]

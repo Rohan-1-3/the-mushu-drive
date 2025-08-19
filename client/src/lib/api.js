@@ -39,5 +39,32 @@ export const authApi = {
     getCurrentUser: () => api.get('/user/me')
 };
 
+// File operations API
+export const fileApi = {
+    getAllFiles: () => api.get('/files/m/0'),
+    getSingleFile: (fileId) => api.get(`/files/m/${fileId}`),
+    uploadSingleFile: (formData) => api.post('/files/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    uploadMultipleFiles: (formData) => api.post('/files/upload-multiple', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    renameFile: (fileId, name) => api.put(`/files/m/${fileId}`, { name }),
+    deleteFile: (fileId) => api.delete(`/files/m/${fileId}`),
+    deleteMultipleFiles: (fileIds) => api.delete('/files/m/delete-multiple', { data: { fileIds } }),
+    getDownloadUrl: (fileId) => api.get(`/files/m/${fileId}/download`)
+};
+
+// Folder operations API
+export const folderApi = {
+    getAllFolders: (parentId = null) => api.get('/folders/f/0', { params: { parentId } }),
+    getSingleFolder: (folderId) => api.get(`/folders/f/${folderId}`),
+    getFolderContents: (folderId) => api.get(`/folders/f/${folderId}/files`),
+    createFolder: (folderName, parentId = null) => api.post('/folders/create', { folderName, parentId }),
+    renameFolder: (folderId, folderName) => api.put(`/folders/f/${folderId}`, { folderName }),
+    deleteFolder: (folderId, force = false) => api.delete(`/folders/f/${folderId}`, { params: { force } }),
+    bulkDeleteFolders: (folderIds, force = false) => api.delete('/folders/bulk-delete', { data: { folderIds, force } })
+};
+
 export default api;
 

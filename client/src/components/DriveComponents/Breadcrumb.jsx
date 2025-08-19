@@ -4,7 +4,6 @@ const Breadcrumb = ({ currentPath, onNavigate }) => {
     const pathParts = currentPath.split('/').filter(part => part !== '');
     
     const breadcrumbItems = [
-        { name: 'My Drive', path: '/' },
         ...pathParts.map((part, index) => ({
             name: part.charAt(0).toUpperCase() + part.slice(1),
             path: '/' + pathParts.slice(0, index + 1).join('/')
@@ -21,7 +20,7 @@ const Breadcrumb = ({ currentPath, onNavigate }) => {
                         </svg>
                     )}
                     <button
-                        onClick={() => onNavigate(item.path)}
+                        onClick={() => onNavigate(index)}
                         className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-300 ${
                             index === breadcrumbItems.length - 1
                                 ? 'text-primary cursor-default'
