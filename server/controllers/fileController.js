@@ -207,6 +207,57 @@ export const getFileDownloadUrl = expressAsyncHandler(async (req, res, next) => 
     }
 });
 
+export const downloadFile = expressAsyncHandler(async (req, res, next) => {
+    const fileId = req.params.id;
+    
+    const file = await prisma.file.findUnique({
+        where: { id: fileId }
+    });
+
+    if (!file) {
+        return res.status(404).json({ error: "File not found" });
+    }
+
+    // Check if user has access to this file
+    if (file.userId !== req.user.id && file.private) {
+        return res.status(403).json({ error: "Access denied" });
+    }
+
+    try {
+        // Get the file data from Supabase
+        const { data: fileData, error: downloadError } = await supabase.storage
+            .from('files')
+            .download(file.supabasePath);
+
+        if (downloadError) {
+            console.error('Error downloading from Supabase:', downloadError);
+            return res.status(500).json({ 
+                error: "Failed to download file",
+                details: downloadError.message 
+            });
+        }
+
+        // Convert the blob to buffer
+        const buffer = Buffer.from(await fileData.arrayBuffer());
+
+        // Set headers to force download
+        res.set({
+            'Content-Type': file.mimetype || 'application/octet-stream',
+            'Content-Disposition': `attachment; filename="${file.name}"`,
+            'Content-Length': buffer.length
+        });
+
+        // Send the file data
+        res.send(buffer);
+    } catch (error) {
+        console.error('Error in download process:', error);
+        return res.status(500).json({
+            error: "Failed to download file",
+            details: error.message
+        });
+    }
+});
+
 export const getSingleFile = expressAsyncHandler(async (req, res, next)=>{
     const fileId = req.params.id;
     const file = await prisma.file.findUnique({

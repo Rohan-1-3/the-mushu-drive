@@ -51,7 +51,8 @@ export const router = createBrowserRouter([
         path: "/drive",
         element: <ProtectedLayout />, loader: protectedLoader,
         children:[
-            { index: true, element: <Dashboard /> }
+            { index: true, element: <Dashboard /> },
+            { path: "folder/:folderId", element: <Dashboard /> }
         ]
     }
 ])

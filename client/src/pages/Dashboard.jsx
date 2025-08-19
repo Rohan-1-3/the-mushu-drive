@@ -1,19 +1,26 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import DriveToolbar from '../components/DriveComponents/DriveToolbar';
 import Breadcrumb from '../components/DriveComponents/Breadcrumb';
 import DriveGrid from '../components/DriveComponents/DriveGrid';
 import ContextMenu from '../components/DriveComponents/ContextMenu';
 import CreateFolderModal from '../components/DriveComponents/CreateFolderModal';
+import FileViewer from '../components/DriveComponents/FileViewer';
 import { fileApi, folderApi } from '../lib/api';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { folderId } = useParams();
+  
   const [viewMode, setViewMode] = useState('grid');
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentFolderId, setCurrentFolderId] = useState(undefined); // undefined means root
+  const [currentFolderId, setCurrentFolderId] = useState(folderId || null);
   const [currentItems, setCurrentItems] = useState([]);
-  const [breadcrumbs, setBreadcrumbs] = useState([{ id: null, name: 'My Drive', path: '/' }]);
+  const [breadcrumbs, setBreadcrumbs] = useState([{ id: null, name: 'My Drive', url: '/drive' }]);
   const [contextMenu, setContextMenu] = useState({ isVisible: false, position: { x: 0, y: 0 }, item: null });
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
+  const [fileViewerState, setFileViewerState] = useState({ isOpen: false, file: null });
   const [loading, setLoading] = useState(false);
 
   // Helper function to get file type icon
@@ -99,27 +106,64 @@ export default function Dashboard() {
     }
   }, [transformFolderData, transformFileData]);
 
-  // Load initial data
+  // Build breadcrumb trail by traversing folder hierarchy
+  const buildBreadcrumbTrail = useCallback(async (folderId) => {
+    if (folderId === null) {
+      setBreadcrumbs([{ id: null, name: 'My Drive', url: '/drive' }]);
+      return;
+    }
+
+    try {
+      const folderResponse = await folderApi.getSingleFolder(folderId);
+      const currentFolder = folderResponse;
+      
+      // Build the trail by following parent relationships
+      const trail = [];
+      let folder = currentFolder;
+      
+      // Traverse up the hierarchy
+      while (folder) {
+        trail.unshift({ 
+          id: folder.id, 
+          name: folder.name,
+          url: `/drive/folder/${folder.id}`
+        });
+        
+        if (folder.parentId) {
+          const parentResponse = await folderApi.getSingleFolder(folder.parentId);
+          folder = parentResponse;
+        } else {
+          folder = null;
+        }
+      }
+      
+      // Add root at the beginning
+      setBreadcrumbs([{ id: null, name: 'My Drive', url: '/drive' }, ...trail]);
+    } catch (error) {
+      console.error('Failed to build breadcrumb trail:', error);
+      setBreadcrumbs([{ id: null, name: 'My Drive', url: '/drive' }]);
+    }
+  }, []);
+
+  // Update current folder when URL changes
+  useEffect(() => {
+    const folderIdFromUrl = folderId || null;
+    setCurrentFolderId(folderIdFromUrl);
+  }, [folderId]);
+
+  // Load initial data and build breadcrumbs
   useEffect(() => {
     loadFolderContents(currentFolderId);
-  }, [currentFolderId, loadFolderContents]);
+    buildBreadcrumbTrail(currentFolderId);
+  }, [currentFolderId, loadFolderContents, buildBreadcrumbTrail]);
 
   const handleItemDoubleClick = (item) => {
     if (item.type === 'folder') {
-      // Navigate into folder
-      setCurrentFolderId(item.id);
-      
-      // Update breadcrumbs
-      setBreadcrumbs(prev => [...prev, { 
-        id: item.id, 
-        name: item.name, 
-        path: `${prev[prev.length - 1].path}${item.name}/` 
-      }]);
+      // Navigate into folder using URL
+      navigate(`/drive/folder/${item.id}`);
     } else {
-      // Open/download file
-      if (item.url) {
-        window.open(item.url, '_blank');
-      }
+      // Open file in viewer
+      setFileViewerState({ isOpen: true, file: item });
     }
   };
 
@@ -136,6 +180,7 @@ export default function Dashboard() {
     try {
       switch (action) {
         case 'open':
+        case 'preview':
           handleItemDoubleClick(item);
           break;
           
@@ -234,26 +279,16 @@ export default function Dashboard() {
     input.click();
   };
 
-  const handleNavigate = (breadcrumbIndex) => {
-    const targetBreadcrumb = breadcrumbs[breadcrumbIndex];
-    setCurrentFolderId(targetBreadcrumb.id);
-    setBreadcrumbs(breadcrumbs.slice(0, breadcrumbIndex + 1));
+  const handleBreadcrumbNavigate = (breadcrumb) => {
+    navigate(breadcrumb.url);
   };
 
   return (
     <div className="space-y-4 p-4">
-      {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold text-text-light dark:text-text-dark">My Drive</h1>
-        <p className="text-text-light/70 dark:text-text-dark/70">
-          Organize and access your files from anywhere
-        </p>
-      </div>
-
       {/* Breadcrumb Navigation */}
       <Breadcrumb
-        currentPath={breadcrumbs.map(b => b.name).join('/')}
-        onNavigate={handleNavigate}
+        breadcrumbs={breadcrumbs}
+        onNavigate={handleBreadcrumbNavigate}
       />
 
       {/* Toolbar */}
@@ -297,6 +332,13 @@ export default function Dashboard() {
         isOpen={isCreateFolderModalOpen}
         onClose={() => setIsCreateFolderModalOpen(false)}
         onCreateFolder={handleCreateFolder}
+      />
+
+      {/* File Viewer */}
+      <FileViewer
+        file={fileViewerState.file}
+        isOpen={fileViewerState.isOpen}
+        onClose={() => setFileViewerState({ isOpen: false, file: null })}
       />
     </div>
   );

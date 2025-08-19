@@ -52,7 +52,9 @@ export const fileApi = {
     renameFile: (fileId, name) => api.put(`/files/m/${fileId}`, { name }),
     deleteFile: (fileId) => api.delete(`/files/m/${fileId}`),
     deleteMultipleFiles: (fileIds) => api.delete('/files/m/delete-multiple', { data: { fileIds } }),
-    getDownloadUrl: (fileId) => api.get(`/files/m/${fileId}/download`)
+    getDownloadUrl: (fileId) => api.get(`/files/m/${fileId}/download`),
+    getPreviewUrl: (fileId) => api.get(`/files/m/${fileId}/download`), // Reuse download endpoint for preview
+    downloadFile: (fileId) => api.get(`/files/m/${fileId}/download-file`, { responseType: 'blob' }) // Force download
 };
 
 // Folder operations API

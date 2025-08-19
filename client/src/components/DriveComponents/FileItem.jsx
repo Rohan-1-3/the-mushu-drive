@@ -28,9 +28,6 @@ const FileItem = ({ item, viewMode, onDoubleClick, onRightClick }) => {
             >
                 {/* Icon and Name */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="text-2xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                        {item.icon}
-                    </div>
                     <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-text-light dark:text-text-dark truncate group-hover:text-primary transition-colors duration-300">
                             {item.name}
@@ -60,7 +57,7 @@ const FileItem = ({ item, viewMode, onDoubleClick, onRightClick }) => {
 
                 {/* Actions */}
                 <div className="w-8 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="p-1 hover:bg-white/30 dark:hover:bg-white/20 rounded text-text-light/70 dark:text-text-dark/70 hover:text-primary transition-all duration-300">
+                    <button onClick={handleContextMenu} className="p-1 hover:bg-white/30 dark:hover:bg-white/20 rounded text-text-light/70 dark:text-text-dark/70 hover:text-primary transition-all duration-300">
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
                         </svg>
@@ -100,15 +97,6 @@ const FileItem = ({ item, viewMode, onDoubleClick, onRightClick }) => {
                         <span className="text-xs">🔗</span>
                     </div>
                 )}
-
-                {/* Hover actions */}
-                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="p-1 bg-white/20 dark:bg-black/20 backdrop-blur-sm rounded-full hover:bg-white/30 dark:hover:bg-black/30 text-text-light/70 dark:text-text-dark/70 hover:text-primary transition-all duration-300">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                        </svg>
-                    </button>
-                </div>
             </div>
         </div>
     );

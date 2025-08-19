@@ -37,10 +37,7 @@ const DriveGrid = ({ items, viewMode, onItemDoubleClick, onItemRightClick, searc
             <div className="space-y-1">
                 {/* Header */}
                 <div className="flex items-center gap-4 px-3 py-2 text-sm font-medium text-text-light/70 dark:text-text-dark/70 border-b border-white/20 dark:border-white/10">
-                    <div className="flex items-center gap-3 flex-1">
-                        <div className="w-8"></div>
-                        <span>Name</span>
-                    </div>
+                    <div className="flex items-center gap-3 flex-1">Name</div>
                     <div className="w-20 text-right">Size</div>
                     <div className="w-24 text-right">Modified</div>
                     <div className="w-8"></div>

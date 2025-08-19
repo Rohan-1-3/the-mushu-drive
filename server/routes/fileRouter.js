@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changeFileName, deleteMultipleFiles, deleteSingleFile, getAllFiles, getFileDownloadUrl, getSingleFile, uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
+import { changeFileName, deleteMultipleFiles, deleteSingleFile, downloadFile, getAllFiles, getFileDownloadUrl, getSingleFile, uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
 import { isOwner, requireAuth } from "../configs/auth.js";
 
 export const fileRouter = new Router();
@@ -13,6 +13,7 @@ fileRouter.get("/m/0", requireAuth, getAllFiles);
 fileRouter.get("/m/:id", requireAuth, getSingleFile)
 // // download
 fileRouter.get("/m/:id/download", requireAuth, getFileDownloadUrl)
+fileRouter.get("/m/:id/download-file", requireAuth, downloadFile)
 // // update name
 fileRouter.put("/m/:id", requireAuth, changeFileName)
 // // delete
