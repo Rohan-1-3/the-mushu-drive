@@ -18,7 +18,7 @@ export default defineConfig(({ command, mode }) => {
       port: 5173,
       proxy: {
         '/api': {
-          target: import.meta.env.BACKEND_URL || 'http://localhost:3001',
+          target: 'http://localhost:3001',
           changeOrigin: true
         }
       }
