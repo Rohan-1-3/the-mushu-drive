@@ -3,12 +3,15 @@ import react from '@vitejs/plugin-react-swc'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   const isProduction = command === 'build'
+  
+  // Set base path for GitHub Pages deployment
+  const base = mode === 'github-pages' ? '/the-mushu-drive/' : '/'
   
   return {
     plugins: [react(), tailwindcss()],
-    base: '/',
+    base: base,
     build: {
       outDir: 'dist',
       assetsDir: 'assets'
