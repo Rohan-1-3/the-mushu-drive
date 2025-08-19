@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import DriveToolbar from '../components/DriveComponents/DriveToolbar';
 import Breadcrumb from '../components/DriveComponents/Breadcrumb';
 import DriveGrid from '../components/DriveComponents/DriveGrid';
 import ContextMenu from '../components/DriveComponents/ContextMenu';
 import CreateFolderModal from '../components/DriveComponents/CreateFolderModal';
 import FileViewer from '../components/DriveComponents/FileViewer';
+import ConfirmationModal from '../components/ui/ConfirmationModal';
+import RenameModal from '../components/ui/RenameModal';
+import DeleteFolderModal from '../components/ui/DeleteFolderModal';
 import { fileApi, folderApi } from '../lib/api';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { folderId } = useParams();
   
   const [viewMode, setViewMode] = useState('grid');
@@ -22,6 +25,24 @@ export default function Dashboard() {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [fileViewerState, setFileViewerState] = useState({ isOpen: false, file: null });
   const [loading, setLoading] = useState(false);
+
+  // Modal states
+  const [confirmationModal, setConfirmationModal] = useState({ 
+    isOpen: false, 
+    title: '', 
+    message: '', 
+    onConfirm: null,
+    type: 'danger'
+  });
+  const [renameModal, setRenameModal] = useState({ 
+    isOpen: false, 
+    item: null, 
+    currentName: ''
+  });
+  const [deleteFolderModal, setDeleteFolderModal] = useState({
+    isOpen: false,
+    folder: null
+  });
 
   // Helper function to get file type icon
   const getFileIcon = (mimetype) => {
@@ -176,6 +197,84 @@ export default function Dashboard() {
     });
   };
 
+  // Modal helper functions
+  const showConfirmation = (title, message, onConfirm, type = 'danger') => {
+    setConfirmationModal({
+      isOpen: true,
+      title,
+      message,
+      onConfirm,
+      type
+    });
+  };
+
+  const showToast = (message, type = 'info') => {
+    switch (type) {
+      case 'success':
+        toast.success(message);
+        break;
+      case 'error':
+        toast.error(message);
+        break;
+      case 'warning':
+        toast.warning(message);
+        break;
+      default:
+        toast.info(message);
+    }
+  };
+
+  const showRename = (item) => {
+    setRenameModal({
+      isOpen: true,
+      item,
+      currentName: item.name
+    });
+  };
+
+  const showDeleteFolder = (folder) => {
+    setDeleteFolderModal({
+      isOpen: true,
+      folder
+    });
+  };
+
+  const handleRename = async (newName) => {
+    try {
+      const item = renameModal.item;
+      if (item.type === 'folder') {
+        await folderApi.renameFolder(item.id, newName);
+      } else {
+        await fileApi.renameFile(item.id, newName);
+      }
+      // Reload current folder
+      loadFolderContents(currentFolderId);
+      showToast(`${item.name} has been renamed to ${newName}.`, 'success');
+    } catch (error) {
+      console.error('Failed to rename item:', error);
+      showToast('Failed to rename item. Please try again.', 'error');
+    }
+  };
+
+  const handleDeleteFolder = async (force = false) => {
+    try {
+      const folder = deleteFolderModal.folder;
+      await folderApi.deleteFolder(folder.id, force);
+      // Reload current folder
+      loadFolderContents(currentFolderId);
+      showToast(
+        `Folder "${folder.name}" has been deleted successfully.`,
+        'success'
+      );
+    } catch (error) {
+      console.error('Failed to delete folder:', error);
+      showToast(
+        'Failed to delete folder. Please try again.',
+        'error'
+      );
+    }
+  };
+
   const handleContextMenuAction = async (action, item) => {
     try {
       switch (action) {
@@ -192,41 +291,42 @@ export default function Dashboard() {
           break;
           
         case 'share':
-          alert(`Sharing functionality for ${item.name} coming soon...`);
+          showToast(`Sharing functionality for ${item.name} will be available soon.`, 'info');
           break;
           
-        case 'rename': {
-          const newName = prompt(`Rename ${item.name} to:`, item.name);
-          if (newName && newName !== item.name) {
-            if (item.type === 'folder') {
-              await folderApi.renameFolder(item.id, newName);
-            } else {
-              await fileApi.renameFile(item.id, newName);
-            }
-            // Reload current folder
-            loadFolderContents(currentFolderId);
-          }
+        case 'rename':
+          showRename(item);
           break;
-        }
         
         case 'delete':
-          if (confirm(`Are you sure you want to delete ${item.name}?`)) {
-            if (item.type === 'folder') {
-              await folderApi.deleteFolder(item.id, false);
-            } else {
-              await fileApi.deleteFile(item.id);
-            }
-            // Reload current folder
-            loadFolderContents(currentFolderId);
+          if (item.type === 'folder') {
+            showDeleteFolder(item);
+          } else {
+            showConfirmation(
+              'Delete File',
+              `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
+              async () => {
+                try {
+                  await fileApi.deleteFile(item.id);
+                  // Reload current folder
+                  loadFolderContents(currentFolderId);
+                  showToast(`${item.name} has been deleted successfully.`, 'success');
+                } catch (error) {
+                  console.error(`Failed to delete ${item.name}:`, error);
+                  showToast(`Failed to delete ${item.name}. Please try again.`, 'error');
+                }
+              },
+              'danger'
+            );
           }
           break;
           
         default:
-          alert(`Action: ${action} on ${item.name}`);
+          showToast(`${action} action on ${item.name}`, 'info');
       }
     } catch (error) {
       console.error(`Failed to ${action} ${item.name}:`, error);
-      alert(`Failed to ${action} ${item.name}. Please try again.`);
+      showToast(`Failed to ${action} ${item.name}. Please try again.`, 'error');
     }
   };
 
@@ -236,9 +336,10 @@ export default function Dashboard() {
       await folderApi.createFolder(folderName, currentFolderId);
       // Reload current folder to show new folder
       loadFolderContents(currentFolderId);
+      showToast(`Folder "${folderName}" has been created successfully.`, 'success');
     } catch (error) {
       console.error('Failed to create folder:', error);
-      alert('Failed to create folder. Please try again.');
+      showToast('Failed to create folder. Please try again.', 'error');
     }
   };
 
@@ -268,9 +369,10 @@ export default function Dashboard() {
         
         // Reload current folder to show uploaded files
         loadFolderContents(currentFolderId);
+        showToast(`${files.length === 1 ? 'File' : files.length + ' files'} uploaded successfully.`, 'success');
       } catch (error) {
         console.error('Failed to upload files:', error);
-        alert('Failed to upload files. Please try again.');
+        showToast('Failed to upload files. Please try again.', 'error');
       } finally {
         setLoading(false);
       }
@@ -339,6 +441,36 @@ export default function Dashboard() {
         file={fileViewerState.file}
         isOpen={fileViewerState.isOpen}
         onClose={() => setFileViewerState({ isOpen: false, file: null })}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        onClose={() => setConfirmationModal({ ...confirmationModal, isOpen: false })}
+        onConfirm={() => {
+          confirmationModal.onConfirm?.();
+          setConfirmationModal({ ...confirmationModal, isOpen: false });
+        }}
+        title={confirmationModal.title}
+        message={confirmationModal.message}
+        type={confirmationModal.type}
+      />
+
+      {/* Rename Modal */}
+      <RenameModal
+        isOpen={renameModal.isOpen}
+        onClose={() => setRenameModal({ ...renameModal, isOpen: false })}
+        onRename={handleRename}
+        currentName={renameModal.currentName}
+        title={`Rename ${renameModal.item?.type === 'folder' ? 'Folder' : 'File'}`}
+      />
+
+      {/* Delete Folder Modal */}
+      <DeleteFolderModal
+        isOpen={deleteFolderModal.isOpen}
+        onClose={() => setDeleteFolderModal({ ...deleteFolderModal, isOpen: false })}
+        onConfirm={handleDeleteFolder}
+        folder={deleteFolderModal.folder}
       />
     </div>
   );

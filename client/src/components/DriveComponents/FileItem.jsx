@@ -19,6 +19,26 @@ const FileItem = ({ item, viewMode, onDoubleClick, onRightClick }) => {
         onRightClick && onRightClick(e, item);
     };
 
+    const getFileTypeDisplay = (item) => {
+        if (item.type === 'folder') {
+            return 'Folder';
+        }
+        
+        if (item.fileType) {
+            // Extract main type from mimetype (e.g., 'image/jpeg' -> 'Image')
+            const mainType = item.fileType.split('/')[0];
+            return mainType.charAt(0).toUpperCase() + mainType.slice(1);
+        }
+        
+        // Fallback to file extension if available
+        const extension = item.name.split('.').pop();
+        if (extension && extension !== item.name) {
+            return extension.toUpperCase();
+        }
+        
+        return 'File';
+    };
+
     if (viewMode === 'list') {
         return (
             <div
@@ -39,6 +59,13 @@ const FileItem = ({ item, viewMode, onDoubleClick, onRightClick }) => {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Type */}
+                <div className="w-24">
+                    <p className="text-sm text-text-light/70 dark:text-text-dark/70">
+                        {getFileTypeDisplay(item)}
+                    </p>
                 </div>
 
                 {/* Size */}
