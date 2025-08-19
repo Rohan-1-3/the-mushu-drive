@@ -8,7 +8,7 @@ export default defineConfig(({ command }) => {
   
   return {
     plugins: [react(), tailwindcss()],
-    base: isProduction ? '/fileUploader/' : '/',
+    base: '/',
     build: {
       outDir: 'dist',
       assetsDir: 'assets'
