@@ -3,11 +3,24 @@ import react from '@vitejs/plugin-react-swc'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  base: '/fileUploader/',
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets'
+export default defineConfig(({ command }) => {
+  const isProduction = command === 'build'
+  
+  return {
+    plugins: [react(), tailwindcss()],
+    base: isProduction ? '/fileUploader/' : '/',
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets'
+    },
+    server: {
+      port: 5173,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true
+        }
+      }
+    }
   }
 })

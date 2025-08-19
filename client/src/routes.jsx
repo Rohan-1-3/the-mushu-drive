@@ -55,4 +55,6 @@ export const router = createBrowserRouter([
             { path: "folder/:folderId", element: <Dashboard /> }
         ]
     }
-])
+], {
+    basename: import.meta.env.PROD ? '/fileUploader' : '/'
+})
