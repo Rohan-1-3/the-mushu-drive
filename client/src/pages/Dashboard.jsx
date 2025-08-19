@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/ui/Sidebar';
 import DriveToolbar from '../components/DriveComponents/DriveToolbar';
 import Breadcrumb from '../components/DriveComponents/Breadcrumb';
 import DriveGrid from '../components/DriveComponents/DriveGrid';
@@ -115,50 +114,54 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen space-y-4">
-      <Sidebar />
-      
-      <div className="ml-0 lg:ml-4 space-y-4 p-4">
-        {/* Breadcrumb Navigation */}
-        <Breadcrumb currentPath={currentPath} onNavigate={handleNavigate} />
+    <div className="space-y-4 p-4">
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold text-text-light dark:text-text-dark">My Drive</h1>
+        <p className="text-text-light/70 dark:text-text-dark/70">
+          Organize and access your files from anywhere
+        </p>
+      </div>
 
-        {/* Toolbar */}
-        <DriveToolbar
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb currentPath={currentPath} onNavigate={handleNavigate} />
+
+      {/* Toolbar */}
+      <DriveToolbar
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onCreateFolder={() => setIsCreateFolderModalOpen(true)}
+        onUploadFile={handleUploadFile}
+      />
+
+      {/* Drive Grid */}
+      <div className="bg-white/10 dark:bg-black/10 backdrop-blur-md rounded-xl border border-white/20 dark:border-white/10 p-6">
+        <DriveGrid
+          items={currentItems}
           viewMode={viewMode}
-          setViewMode={setViewMode}
+          onItemDoubleClick={handleItemDoubleClick}
+          onItemRightClick={handleItemRightClick}
           searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          onCreateFolder={() => setIsCreateFolderModalOpen(true)}
-          onUploadFile={handleUploadFile}
-        />
-
-        {/* Drive Grid */}
-        <div className="bg-white/10 dark:bg-black/10 backdrop-blur-md rounded-xl border border-white/20 dark:border-white/10 p-6">
-          <DriveGrid
-            items={currentItems}
-            viewMode={viewMode}
-            onItemDoubleClick={handleItemDoubleClick}
-            onItemRightClick={handleItemRightClick}
-            searchTerm={searchTerm}
-          />
-        </div>
-
-        {/* Context Menu */}
-        <ContextMenu
-          isVisible={contextMenu.isVisible}
-          position={contextMenu.position}
-          item={contextMenu.item}
-          onClose={() => setContextMenu({ isVisible: false, position: { x: 0, y: 0 }, item: null })}
-          onAction={handleContextMenuAction}
-        />
-
-        {/* Create Folder Modal */}
-        <CreateFolderModal
-          isOpen={isCreateFolderModalOpen}
-          onClose={() => setIsCreateFolderModalOpen(false)}
-          onCreateFolder={handleCreateFolder}
         />
       </div>
+
+      {/* Context Menu */}
+      <ContextMenu
+        isVisible={contextMenu.isVisible}
+        position={contextMenu.position}
+        item={contextMenu.item}
+        onClose={() => setContextMenu({ isVisible: false, position: { x: 0, y: 0 }, item: null })}
+        onAction={handleContextMenuAction}
+      />
+
+      {/* Create Folder Modal */}
+      <CreateFolderModal
+        isOpen={isCreateFolderModalOpen}
+        onClose={() => setIsCreateFolderModalOpen(false)}
+        onCreateFolder={handleCreateFolder}
+      />
     </div>
   );
 }

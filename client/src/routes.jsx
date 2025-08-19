@@ -27,7 +27,7 @@ async function protectedLoader({ request }) {
 
 async function authPageLoader() {
     const authed = await checkAuth();
-    if (authed) throw redirect('/app');
+    if (authed) throw redirect('/drive');
     return null;
 }
 
@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
         element: <AuthenticationPage />, loader: authPageLoader
     },
     {
-        path: "/app",
+        path: "/drive",
         element: <ProtectedLayout />, loader: protectedLoader,
         children:[
             { index: true, element: <Dashboard /> }

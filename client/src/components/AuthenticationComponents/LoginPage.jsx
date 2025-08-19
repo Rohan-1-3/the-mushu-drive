@@ -28,7 +28,7 @@ function LoginPage() {
         try {
             setError(null);
             await authApi.login({ username: formData.username, password: formData.password });
-            navigate('/app');
+            navigate('/drive');
         } catch (e) {
             setError(e.message);
         } finally {

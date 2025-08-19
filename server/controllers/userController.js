@@ -113,6 +113,18 @@ export const authenticateUser = (req, res, next) => {
     })
 }
 
+export const getCurrentUser = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        const { password, ...userWithoutPassword } = req.user;
+        return res.status(200).json({
+            user: userWithoutPassword
+        })
+    }
+    res.status(401).json({
+        message: "User is not authenticated"
+    })
+}
+
 export const updateUser = [
     validateUserName, validateUserCredentials, validateRequest,
     expressAsyncHandler(async (req, res) => {
