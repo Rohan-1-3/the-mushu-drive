@@ -6,7 +6,9 @@ import expressAsyncHandler from "express-async-handler";
 import { v4 as uuid } from "uuid"
 import passport from "../configs/passsportLocalConfigs.js";
 
-const prisma = new PrismaClient();
+import { withAccelerate } from '@prisma/extension-accelerate'
+
+const prisma = new PrismaClient().$extends(withAccelerate());
 
 const validateUserName = [
     body('firstname').trim().notEmpty().withMessage("First name cannot be empty.").bail()

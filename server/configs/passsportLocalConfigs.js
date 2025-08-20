@@ -3,7 +3,9 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { compare } from "bcryptjs";
 import { PrismaClient } from "@prisma/client"; // Add this
 
-const prisma = new PrismaClient(); // Add this
+import { withAccelerate } from '@prisma/extension-accelerate'
+
+const prisma = new PrismaClient().$extends(withAccelerate()); // Add this
 
 passport.use(
     new LocalStrategy(async (username, password, done)=>{

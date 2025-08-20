@@ -5,7 +5,9 @@ import { validateRequest } from "../configs/validateRequest.js";
 import { body } from "express-validator";
 import { generateUniqueFolderName } from "../utils/nameResolution.js";
 
-const prisma = new PrismaClient();
+import { withAccelerate } from '@prisma/extension-accelerate'
+
+const prisma = new PrismaClient().$extends(withAccelerate());
 
 const validateFolderName = [
     body("folderName").trim().notEmpty().withMessage("Folder name cannot be empty.").bail()

@@ -8,12 +8,15 @@ import session from "express-session";
 import passport from "./configs/passsportLocalConfigs.js";
 import { fileRouter } from "./routes/fileRouter.js";
 import { folderRouter }from "./routes/folderRouter.js";
+import { withAccelerate } from '@prisma/extension-accelerate'
 
 dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-const prisma = new PrismaClient()
+
+
+const prisma = new PrismaClient().$extends(withAccelerate())
 
 app.use(cors({
     origin: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL_DEV,

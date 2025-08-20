@@ -5,7 +5,9 @@ import { PrismaClient } from "@prisma/client";
 import { supabase, generateFilePath } from "../configs/supabase.js";
 import { generateUniqueFileName } from "../utils/nameResolution.js";
 
-const prisma = new PrismaClient();
+import { withAccelerate } from '@prisma/extension-accelerate'
+
+const prisma = new PrismaClient().$extends(withAccelerate());
 
 const storage = multer.memoryStorage();
 const upload = multer({ 
