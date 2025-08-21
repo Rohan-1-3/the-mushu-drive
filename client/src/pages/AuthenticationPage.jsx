@@ -49,7 +49,7 @@ function AuthenticationPage() {
                         className="flex items-center space-x-2 cursor-pointer" 
                         onClick={() => navigate('/')}
                     >
-                        <div className="w-8 h-8 rotate-45 rounded-sm shadow-lg bg-primary"></div>
+                        <img src="/vite.svg" alt="Mini Drive Logo" width={64} className='mx-auto'/>
                         <span className="font-bold tracking-widest text-xl">MINI DRIVE</span>
                     </div>
 

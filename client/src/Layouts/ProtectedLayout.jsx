@@ -45,7 +45,7 @@ export default function ProtectedLayout() {
         {/* Header/Navbar */}
         <header className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5 dark:bg-black/5 backdrop-blur-sm">
           <Link to="/drive" className="font-bold tracking-wider flex items-center space-x-2">
-            <div className="w-6 h-6 rotate-45 rounded-sm bg-primary" />
+            <img src="/vite.svg" alt="Mini Drive Logo" width={64}/>
             <span>MINI DRIVE</span>
           </Link>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { sidebarItems } from '../../data';
+import { Link } from 'react-router';
 
 function Sidebar({ onLogout }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +10,7 @@ function Sidebar({ onLogout }) {
     };
 
     return (
-        <aside className={`h-screen sticky top-0 bg-white/10 dark:bg-black/20 backdrop-blur-xl border-r border-white/20 dark:border-white/10 shadow-2xl transition-all duration-300 ease-in-out ${isOpen ? 'w-80' : 'w-16'
+        <aside className={`h-screen sticky top-0 border-white/20 dark:border-white/10 transition-all duration-300 ease-in-out ${isOpen ? 'w-80' : 'w-16'
             }`}>
             <div className="h-screen flex flex-col">
                 {/* Header */}
@@ -35,9 +36,9 @@ function Sidebar({ onLogout }) {
                     <ul className="space-y-2">
                         {sidebarItems.map((item, index) => (
                             <li key={index}>
-                                <a
-                                    href={item.href}
-                                    className="flex items-center space-x-3 px-3 py-3 rounded-xl text-text-light dark:text-text-dark hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 group"
+                                <Link
+                                    to={item.href}
+                                    className="flex items-center space-x-3 px-3 py-3 rounded-xl text-text-light dark:text-text-dark transition-all duration-300 group"
                                     title={!isOpen ? item.label : undefined}
                                 >
                                     <span className="text-2xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
@@ -48,7 +49,7 @@ function Sidebar({ onLogout }) {
                                             {item.label}
                                         </span>
                                     )}
-                                </a>
+                                </Link>
                             </li>
                         ))}
                     </ul>
@@ -69,10 +70,10 @@ function Sidebar({ onLogout }) {
                 )} */}
 
                 {/* Logout Button */}
-                <div className="p-4 border-t border-white/20 dark:border-white/10">
+                <div className="p-4 border-white/20 dark:border-white/10">
                     <button
                         onClick={onLogout}
-                        className={`flex items-center space-x-3 px-3 py-3 rounded-xl text-text-light dark:text-text-dark hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 group ${
+                        className={`flex items-center space-x-3 px-3 py-3 rounded-xl text-text-light dark:text-text-dark transition-all duration-300 group ${
                             !isOpen ? 'justify-center' : 'space-x-3'
                         }`}
                         title={!isOpen ? 'Logout' : undefined}

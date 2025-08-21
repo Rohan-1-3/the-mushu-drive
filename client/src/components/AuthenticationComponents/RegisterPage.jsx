@@ -69,7 +69,7 @@ function RegisterPage() {
             <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-2xl p-8">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="w-12 h-12 rotate-45 rounded-lg shadow-lg bg-primary mx-auto mb-4"></div>
+                    <img src="/vite.svg" alt="Mini Drive Logo" width={64} className='mx-auto'/>
                     <h2 className="text-3xl font-bold text-text-light dark:text-text-dark mb-2">Join Mini Drive</h2>
                     <p className="text-text-light/70 dark:text-text-dark/70">Create your account to get started</p>
                 </div>

@@ -20,7 +20,7 @@ function Navbar() {
 
                 {/* Logo Section */}
                 <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 rotate-45 rounded-sm shadow-lg bg-primary"></div>
+                    <img src="/vite.svg" alt="Mini Drive Logo" width={64}/>
                     <span className="font-bold tracking-widest text-text-dark">MINI DRIVE</span>
                 </div>
 
