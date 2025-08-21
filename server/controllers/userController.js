@@ -1,14 +1,14 @@
 import { body } from "express-validator"
 import { validateRequest } from "../configs/validateRequest.js"
 import { hash } from "bcryptjs"
-import { PrismaClient } from "@prisma/client"
+import prismaService from "../services/prismaService.js";
 import expressAsyncHandler from "express-async-handler";
 import { v4 as uuid } from "uuid"
 import passport from "../configs/passsportLocalConfigs.js";
 
 import { withAccelerate } from '@prisma/extension-accelerate'
 
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prisma = prismaService.getClient();
 
 const validateUserName = [
     body('firstname').trim().notEmpty().withMessage("First name cannot be empty.").bail()
@@ -56,7 +56,7 @@ export const registerUser = [
             });
         }
 
-        const hashedPass = await hash(password, 16);
+        const hashedPass = await hash(password, 8);
         const createdUser = await prisma.user.create({
             data: {
                 id: uuid(),

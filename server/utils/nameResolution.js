@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import prismaService from "../services/prismaService.js";
 
 import { withAccelerate } from '@prisma/extension-accelerate'
 
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prisma = prismaService.getClient();
 
 /**
  * Generates a unique name by appending a suffix (number) if the name already exists

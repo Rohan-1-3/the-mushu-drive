@@ -1,13 +1,13 @@
 import expressAsyncHandler from "express-async-handler";
 import multer from "multer";
 import { v4 as uuid } from "uuid";
-import { PrismaClient } from "@prisma/client";
+import prismaService from "../services/prismaService.js";
 import { supabase, generateFilePath } from "../configs/supabase.js";
 import { generateUniqueFileName } from "../utils/nameResolution.js";
 
 import { withAccelerate } from '@prisma/extension-accelerate'
 
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prisma = prismaService.getClient();
 
 const storage = multer.memoryStorage();
 const upload = multer({ 

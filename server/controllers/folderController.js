@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import prismaService from "../services/prismaService.js";
 import expressAsyncHandler from "express-async-handler";
 import { v4 as uuid } from "uuid";
 import { validateRequest } from "../configs/validateRequest.js";
@@ -7,7 +7,7 @@ import { generateUniqueFolderName } from "../utils/nameResolution.js";
 
 import { withAccelerate } from '@prisma/extension-accelerate'
 
-const prisma = new PrismaClient().$extends(withAccelerate());
+const prisma = prismaService.getClient();
 
 const validateFolderName = [
     body("folderName").trim().notEmpty().withMessage("Folder name cannot be empty.").bail()
