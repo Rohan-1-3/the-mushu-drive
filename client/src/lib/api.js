@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use environment variable for API base URL or fallback to localhost
-export const API_BASE = import.meta.env.BACKEND_URL || 'http://localhost:3001/api/v1'
+export const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001/api/v1'
 
 export const api = axios.create({
 	baseURL: API_BASE,
