@@ -2,21 +2,19 @@ import express from "express";
 import dotenv from "dotenv"
 import cors from 'cors'
 import { userRouters } from "./routes/userRouters.js";
-import { PrismaClient } from "@prisma/client";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
 import passport from "./configs/passsportLocalConfigs.js";
 import { fileRouter } from "./routes/fileRouter.js";
 import { folderRouter }from "./routes/folderRouter.js";
-import { withAccelerate } from '@prisma/extension-accelerate'
+import prismaService from "./services/prismaService.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-
-
-const prisma = new PrismaClient().$extends(withAccelerate())
+// Use the optimized global PrismaClient instance
+const prisma = prismaService.getClient();
 
 app.use(cors({
     origin: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL_DEV,
@@ -37,7 +35,7 @@ app.use(
     store: new PrismaSessionStore(
         prisma,
         {
-            checkPeriod: 2 * 60 * 1000,
+            checkPeriod: 5 * 60 * 1000, // Increased from 2 minutes to reduce DB hits
             dbRecordIdIsSessionId: true,
             dbRecordIdFunction: undefined,
         }
@@ -60,6 +58,15 @@ app.use((err, req, res, next)=>{
         message: "Internal Server Error"
     })
 })
+
+// Graceful shutdown
+const gracefulShutdown = async () => {
+    await prismaService.disconnect();
+    process.exit(0);
+};
+
+process.on('SIGINT', gracefulShutdown);
+process.on('SIGTERM', gracefulShutdown);
 
 app.listen(PORT, ()=>{
     console.log(`Listening to port: ${PORT}`)
