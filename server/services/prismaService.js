@@ -10,7 +10,7 @@ class PrismaService {
         this.prisma = new PrismaClient({
             datasources: {
                 db: {
-                    url: process.env.NEON_DB_URI_PROD
+                    url: process.env.PRISMA_DATABASE_URL
                 }
             },
             // Connection pool configuration
