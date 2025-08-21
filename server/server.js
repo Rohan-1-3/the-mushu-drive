@@ -16,6 +16,8 @@ const app = express();
 // Use the optimized global PrismaClient instance
 const prisma = prismaService.getClient();
 
+app.set('trust proxy', 1);
+
 app.use(cors({
     origin: process.env.NODE_ENV === "production" ? process.env.FRONTEND_URL_PROD : process.env.FRONTEND_URL_DEV,
     credentials: true
