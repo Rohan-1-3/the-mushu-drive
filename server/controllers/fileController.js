@@ -163,9 +163,22 @@ export const getFileDownloadUrl = expressAsyncHandler(async (req, res, next) => 
         return res.status(403).json({ error: "Access denied" });
     }
 
-    // Only return success if file exists and user owns it
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from('files')
+        .createSignedUrl(file.supabasePath, 60);
+
+    if (signedUrlError) {
+        console.error('Error creating signed URL:', signedUrlError);
+        return res.status(500).json({
+            error: "Failed to create signed URL",
+            details: signedUrlError.message
+        });
+    }
+
+    // Return the signed URL
     return res.status(200).json({
-        message: "File access verified"
+        message: "File access verified",
+        downloadUrl: signedUrlData.signedUrl
     });
 });
 
@@ -412,3 +425,142 @@ export const deleteMultipleFiles = expressAsyncHandler(async (req, res, next) =>
         });
     }
 })
+
+export const shareAFile = expressAsyncHandler(async (req, res, next) => {
+    const fileId = req.params.id;
+    const { shareTime } = req.body; // in seconds
+
+    // Get the file to share
+    const file = await prisma.file.findUnique({
+        where: { id: fileId }
+    });
+
+    if (!file) {
+        return res.status(404).json({
+            error: "File not found"
+        });
+    }
+
+    if (file.userId !== req.user.id) {
+        const sharedFile = await prisma.sharedFile.findUnique({
+            where: {
+                fileId: file.id
+            }
+        });
+
+        if (!sharedFile) {
+            return res.status(403).json({
+                error: "You do not have permission to share this file"
+            });
+        }
+
+        return res.status(200).json({
+            message: "File access verified",
+            downloadUrl: sharedFile.link
+        });
+    }
+
+    // Create a signed URL for the file
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from('files')
+        .createSignedUrl(file.supabasePath, shareTime);
+
+    if (signedUrlError) {
+        console.error('Error creating signed URL:', signedUrlError);
+        return res.status(500).json({
+            error: "Failed to create signed URL",
+            details: signedUrlError.message
+        });
+    }
+
+    await prisma.sharedFile.create({
+        data: {
+            id: uuid(),
+            fileId: file.id,
+            userId: req.user.id,
+            expiresAt: new Date(Date.now() + shareTime * 1000),
+            link: signedUrlData.signedUrl
+        }
+    })
+
+    return res.status(200).json({
+        message: "File access verified",
+        downloadUrl: signedUrlData.signedUrl
+    });
+});
+
+// Delete a sharedFile by its ID (only owner can delete)
+export const deleteSharedFile = expressAsyncHandler(async (req, res, next) => {
+    const sharedFileId = req.params.id;
+    const userId = req.user.id;
+
+    // Find the sharedFile and check ownership
+    const sharedFile = await prisma.sharedFile.findUnique({
+        where: { id: sharedFileId }
+    });
+
+    if (!sharedFile) {
+        return res.status(404).json({ error: "Shared file not found" });
+    }
+    if (sharedFile.userId !== userId) {
+        return res.status(403).json({ error: "You do not have permission to delete this shared file" });
+    }
+
+    await prisma.sharedFile.delete({
+        where: { id: sharedFileId }
+    });
+    return res.status(200).json({ message: "Shared file deleted successfully" });
+});
+
+// Get all shared files for the current user
+export const getAllSharedFiles = expressAsyncHandler(async (req, res, next) => {
+    const userId = req.user.id;
+    const sharedFiles = await prisma.sharedFile.findMany({
+        where: {
+            userId,
+            expiresAt: {
+                gt: new Date()
+            }
+        },
+        include: { file: {
+            select: {
+                    id: true,
+                    name: true,
+                    size: true,
+                    mimetype: true,
+                    createdAt: true,
+                    updatedAt: true
+                }
+        } }
+    });
+    return res.status(200).json(sharedFiles);
+});
+
+
+export const getSharedFileById = expressAsyncHandler(async (req, res, next) => {
+    const sharedFileId = req.params.id;
+    const sharedFile = await prisma.sharedFile.findUnique({
+        where: {
+            id: sharedFileId, 
+            expiresAt: {
+                gt: new Date()
+            }
+        },
+        include: { file: {
+            select: {
+                    id: true,
+                    name: true,
+                    size: true,
+                    mimetype: true,
+                    createdAt: true,
+                    updatedAt: true
+                }
+        } }
+    });
+
+    if (!sharedFile) {
+        return res.status(404).json({ error: "Shared file not found" });
+    }
+
+    return res.status(200).json(sharedFile);
+});

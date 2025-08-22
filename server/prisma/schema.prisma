@@ -57,8 +57,8 @@ model File {
 
 model sharedFile {
   id            String @id @db.VarChar(255)
-  link          String @unique @db.VarChar(255)
-  expiryDate    DateTime @db.Timestamp(6)
+  link          String @unique
+  expiresAt    DateTime @db.Timestamp(6)
   userId        String @db.VarChar(255)
   user          User  @relation(fields: [userId], references: [id])
   fileId        String @db.VarChar(255)

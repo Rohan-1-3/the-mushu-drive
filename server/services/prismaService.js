@@ -14,7 +14,7 @@ class PrismaService {
                 }
             },
             // Connection pool configuration
-            log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error']
+            // log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error']
         }).$extends(withAccelerate())
 
         PrismaService.instance = this;

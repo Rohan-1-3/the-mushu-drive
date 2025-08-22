@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changeFileName, deleteMultipleFiles, deleteSingleFile, downloadFile, getAllFiles, getFileDownloadUrl, getSingleFile, uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
+import { changeFileName, deleteMultipleFiles, deleteSharedFile, deleteSingleFile, downloadFile, getAllFiles, getAllSharedFiles, getFileDownloadUrl, getSharedFileById, getSingleFile, shareAFile, uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
 import { isOwner, requireAuth } from "../configs/auth.js";
 
 export const fileRouter = new Router();
@@ -21,7 +21,9 @@ fileRouter.delete("/m/delete-multiple", requireAuth, deleteMultipleFiles)
 fileRouter.delete("/m/:id", requireAuth, deleteSingleFile)
 
 // // share file
-// fileRouter.post("/m/:id/share", requireAuth)
+fileRouter.post("/m/:id/share", requireAuth, shareAFile)
 // // revoke share access
-// fileRouter.delete("/m/:id/share", requireAuth)
+fileRouter.delete("/m/:id/share", requireAuth, deleteSharedFile)
 
+fileRouter.get("/m/:id/share", getSharedFileById)
+fileRouter.get("/m/share/0", getAllSharedFiles)
