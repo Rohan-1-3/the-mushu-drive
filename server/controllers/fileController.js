@@ -10,7 +10,7 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 const prisma = prismaService.getClient();
 
 const storage = multer.memoryStorage();
-const upload = multer({ 
+const upload = multer({
     storage,
     limits: {
         fileSize: 50 * 1024 * 1024, // 50MB limit
@@ -22,16 +22,16 @@ const uploadMultiple = upload.array("files", 3);
 
 const fileUpload = async (file, fileConfigs) => {
     const fileId = uuid();
-    
+
     // Generate unique filename to handle duplicates
     const uniqueFileName = await generateUniqueFileName(
-        file.originalname, 
-        fileConfigs.userId, 
+        file.originalname,
+        fileConfigs.userId,
         fileConfigs.folderId
     );
-    
+
     const filePath = generateFilePath(fileConfigs.userId, uniqueFileName);
-    
+
     try {
         // Upload file to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
@@ -52,13 +52,6 @@ const fileUpload = async (file, fileConfigs) => {
 
         console.log('File uploaded successfully to Supabase:', uploadData);
 
-        // Get public URL for the uploaded file
-        const { data: urlData } = supabase.storage
-            .from('files')
-            .getPublicUrl(filePath);
-
-        console.log('Generated public URL:', urlData.publicUrl);
-
         // Save file metadata to Neon database
         return await prisma.file.create({
             data: {
@@ -66,7 +59,6 @@ const fileUpload = async (file, fileConfigs) => {
                 name: uniqueFileName, // Use the unique filename
                 size: file.size,
                 mimetype: file.mimetype,
-                url: urlData.publicUrl,
                 supabasePath: filePath,
                 userId: fileConfigs.userId,
                 folderId: fileConfigs.folderId
@@ -83,10 +75,10 @@ export const uploadSingleFile = [
     expressAsyncHandler(async (req, res, next) => {
         const file = req.file;
         const fileConfigs = {
-            userId : req.user.id,
+            userId: req.user.id,
             folderId: req.body.folderId || null
         }
-        
+
         if (file) {
             try {
                 const fileData = await fileUpload(file, fileConfigs);
@@ -97,11 +89,9 @@ export const uploadSingleFile = [
                         name: fileData.name,
                         size: fileData.size,
                         mimetype: fileData.mimetype,
-                        url: fileData.url,
-                        private: fileData.private,
+                        createdAt: fileData.createdAt,
                         folderId: fileData.folderId,
-                        userId: fileData.userId,
-                        createdAt: fileData.createdAt
+                        userId: fileData.userId
                     }
                 });
             } catch (error) {
@@ -124,7 +114,7 @@ export const uploadMultipleFiles = [
     expressAsyncHandler(async (req, res, next) => {
         const files = req.files
         const fileConfigs = {
-            userId : req.user.id,
+            userId: req.user.id,
             folderId: req.body.folderId || null
         }
         const filesUploaded = []
@@ -141,11 +131,9 @@ export const uploadMultipleFiles = [
                         name: file.name,
                         size: file.size,
                         mimetype: file.mimetype,
-                        url: file.url,
-                        private: file.private,
+                        createdAt: file.createdAt,
                         folderId: file.folderId,
-                        userId: file.userId,
-                        createdAt: file.createdAt
+                        userId: file.userId
                     }))
                 });
             } catch (error) {
@@ -161,7 +149,7 @@ export const uploadMultipleFiles = [
 
 export const getFileDownloadUrl = expressAsyncHandler(async (req, res, next) => {
     const fileId = req.params.id;
-    
+
     const file = await prisma.file.findUnique({
         where: { id: fileId }
     });
@@ -171,47 +159,19 @@ export const getFileDownloadUrl = expressAsyncHandler(async (req, res, next) => 
     }
 
     // Check if user has access to this file
-    if (file.userId !== req.user.id && file.private) {
+    if (file.userId !== req.user.id) {
         return res.status(403).json({ error: "Access denied" });
     }
 
-    try {
-        // For private files, generate a signed URL (valid for 1 hour)
-        if (file.private) {
-            const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-                .from('files')
-                .createSignedUrl(file.supabasePath, 3600); // 1 hour expiry
-
-            if (signedUrlError) {
-                console.error('Error creating signed URL:', signedUrlError);
-                return res.status(500).json({ 
-                    error: "Failed to generate download URL",
-                    details: signedUrlError.message 
-                });
-            }
-
-            return res.status(200).json({
-                downloadUrl: signedUrlData.signedUrl,
-                expiresIn: 3600
-            });
-        } else {
-            // For public files, return the public URL
-            return res.status(200).json({
-                downloadUrl: file.url
-            });
-        }
-    } catch (error) {
-        console.error('Error generating download URL:', error);
-        return res.status(500).json({
-            error: "Failed to generate download URL",
-            details: error.message
-        });
-    }
+    // Only return success if file exists and user owns it
+    return res.status(200).json({
+        message: "File access verified"
+    });
 });
 
 export const downloadFile = expressAsyncHandler(async (req, res, next) => {
     const fileId = req.params.id;
-    
+
     const file = await prisma.file.findUnique({
         where: { id: fileId }
     });
@@ -221,7 +181,7 @@ export const downloadFile = expressAsyncHandler(async (req, res, next) => {
     }
 
     // Check if user has access to this file
-    if (file.userId !== req.user.id && file.private) {
+    if (file.userId !== req.user.id) {
         return res.status(403).json({ error: "Access denied" });
     }
 
@@ -233,9 +193,9 @@ export const downloadFile = expressAsyncHandler(async (req, res, next) => {
 
         if (downloadError) {
             console.error('Error downloading from Supabase:', downloadError);
-            return res.status(500).json({ 
+            return res.status(500).json({
                 error: "Failed to download file",
-                details: downloadError.message 
+                details: downloadError.message
             });
         }
 
@@ -260,7 +220,7 @@ export const downloadFile = expressAsyncHandler(async (req, res, next) => {
     }
 });
 
-export const getSingleFile = expressAsyncHandler(async (req, res, next)=>{
+export const getSingleFile = expressAsyncHandler(async (req, res, next) => {
     const fileId = req.params.id;
     const file = await prisma.file.findUnique({
         where: { id: fileId },
@@ -271,30 +231,28 @@ export const getSingleFile = expressAsyncHandler(async (req, res, next)=>{
         return res.status(404).json({ error: "File not found" });
     }
 
-    // Return file metadata with Supabase URL
+    // Return only basic file info
+    const { id, name, size, mimetype, createdAt, folderId, userId } = file;
     return res.status(200).json({
-        ...file,
-        downloadUrl: file.url // The public URL from Supabase
+        id, name, size, mimetype, createdAt, folderId, userId
     });
 })
 
-export const getAllFiles = expressAsyncHandler(async (req, res, next)=>{
+export const getAllFiles = expressAsyncHandler(async (req, res, next) => {
     const files = await prisma.file.findMany({
         where: { userId: req.user.id },
         include: { user: true, folder: true }
     });
 
-   if (!files) {
-       return res.status(404).json({ error: "No files found" });
-   }
+    if (!files) {
+        return res.status(404).json({ error: "No files found" });
+    }
 
-   // Add download URLs to each file
-   const filesWithUrls = files.map(file => ({
-       ...file,
-       downloadUrl: file.url
-   }));
-
-   return res.status(200).json(filesWithUrls);
+    // Return only basic info for each file
+    const filesBasic = files.map(({ id, name, size, mimetype, createdAt, folderId, userId }) => ({
+        id, name, size, mimetype, createdAt, folderId, userId
+    }));
+    return res.status(200).json(filesBasic);
 })
 
 export const changeFileName = expressAsyncHandler(async (req, res, next) => {
@@ -304,9 +262,9 @@ export const changeFileName = expressAsyncHandler(async (req, res, next) => {
 
     // First get the current file to check ownership and get folder context
     const currentFile = await prisma.file.findFirst({
-        where: { 
+        where: {
             id: fileId,
-            userId: userId 
+            userId: userId
         }
     });
 
@@ -324,11 +282,11 @@ export const changeFileName = expressAsyncHandler(async (req, res, next) => {
         data: { name: uniqueName }
     });
 
-    if(file){
+    if (file) {
         return res.status(200).json({
             newName: uniqueName,
             fileId,
-            message: uniqueName !== newName 
+            message: uniqueName !== newName
                 ? `File renamed to "${uniqueName}" to avoid conflicts`
                 : "File name updated successfully"
         });
@@ -339,7 +297,7 @@ export const changeFileName = expressAsyncHandler(async (req, res, next) => {
     });
 });
 
-export const deleteSingleFile = expressAsyncHandler(async (req, res, next)=>{
+export const deleteSingleFile = expressAsyncHandler(async (req, res, next) => {
     const fileId = req.params.id;
 
     try {
@@ -384,15 +342,15 @@ export const deleteSingleFile = expressAsyncHandler(async (req, res, next)=>{
     }
 });
 
-export const deleteMultipleFiles = expressAsyncHandler(async (req, res, next)=>{
+export const deleteMultipleFiles = expressAsyncHandler(async (req, res, next) => {
     const fileIds = req.body.fileIds;
-    
+
     if (!fileIds || !Array.isArray(fileIds) || fileIds.length === 0) {
         return res.status(400).json({
             error: "No file IDs provided or invalid format"
         });
     }
-    
+
     try {
         // Get all files to delete from Supabase
         const files = await prisma.file.findMany({

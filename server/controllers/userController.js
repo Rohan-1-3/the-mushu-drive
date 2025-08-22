@@ -66,7 +66,16 @@ export const registerUser = [
                 password: hashedPass
             }
         })
-        res.status(200).json({ createdUser })
+        const { id, username: uname, firstname: fname, lastname: lname, createdAt } = createdUser;
+        res.status(200).json({
+            user: {
+                id,
+                username: uname,
+                firstname: fname,
+                lastname: lname,
+                createdAt
+            }
+        })
     })
 ]
 
@@ -78,9 +87,16 @@ export const loginUser = [validateUserCredentials, validateRequest,
 
             req.logIn(user, (err) => {
                 if (err) return next(err);
+                const { id, username: uname, firstname: fname, lastname: lname, createdAt } = user;
                 res.status(200).json({
                     message: 'Login successful',
-                    ...user
+                    user: {
+                        id,
+                        username: uname,
+                        firstname: fname,
+                        lastname: lname,
+                        createdAt
+                    }
                 });
             });
         })(req, res, next);
@@ -117,9 +133,15 @@ export const authenticateUser = (req, res, next) => {
 
 export const getCurrentUser = (req, res, next) => {
     if (req.isAuthenticated()) {
-        const { password, ...userWithoutPassword } = req.user;
+        const { id, username: uname, firstname: fname, lastname: lname, createdAt } = req.user;
         return res.status(200).json({
-            user: userWithoutPassword
+            user: {
+                id,
+                username: uname,
+                firstname: fname,
+                lastname: lname,
+                createdAt
+            }
         })
     }
     res.status(401).json({
@@ -148,7 +170,20 @@ export const updateUser = [
                 data: changes
             });
         }
-        res.status(200).json({ updatedUser })
+        if (updatedUser) {
+            const { id, username: uname, firstname: fname, lastname: lname, createdAt } = updatedUser;
+            res.status(200).json({
+                user: {
+                    id,
+                    username: uname,
+                    firstname: fname,
+                    lastname: lname,
+                    createdAt
+                }
+            })
+        } else {
+            res.status(200).json({ user: null })
+        }
     })
 ]
 

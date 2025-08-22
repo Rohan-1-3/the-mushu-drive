@@ -92,7 +92,6 @@ export default function Dashboard() {
     dateModified: file.updatedAt || file.createdAt,
     shared: false,
     fileType: file.mimetype,
-    url: file.url
   }), []);
 
   // Load items based on current folder

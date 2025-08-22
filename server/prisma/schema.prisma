@@ -42,9 +42,7 @@ model File {
   name          String @db.VarChar(255)
   size          Int
   mimetype      String @db.VarChar(100)
-  url           String @db.Text // Supabase file URL
   supabasePath  String @db.Text // Path in Supabase storage
-  private       Boolean @default(true)
   userId        String @db.VarChar(255)
   user          User  @relation(fields: [userId], references: [id])
   folderId      String? @db.VarChar(255)

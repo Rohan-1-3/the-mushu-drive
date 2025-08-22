@@ -126,7 +126,11 @@ export const createFolder = [
             await updateFolderHierarchyTimestamps(folderId, userId); // Update timestamps for all parent folders
 
             return res.status(200).json({
-                ...folder,
+                    id: folder.id,
+                    name: folder.name,
+                    createdAt: folder.createdAt,
+                    parentId: folder.parentId,
+                    userId: folder.userId,
                 message: uniqueFolderName !== folderName 
                     ? `Folder created as "${uniqueFolderName}" to avoid conflicts`
                     : "Folder creation was successful."
@@ -177,7 +181,11 @@ export const getFolder = expressAsyncHandler(async (req, res) => {
 
     if (folder) {
         return res.status(200).json({
-            ...folder,
+                id: folder.id,
+                name: folder.name,
+                createdAt: folder.createdAt,
+                parentId: folder.parentId,
+                userId: folder.userId,
             message: "Folder retrieved successfully."
         })
     }
@@ -218,7 +226,13 @@ export const getAllFolders = expressAsyncHandler(async (req, res)=>{
     })
 
     return res.status(200).json({
-        folders,
+            folders: folders.map(folder => ({
+                id: folder.id,
+                name: folder.name,
+                createdAt: folder.createdAt,
+                parentId: folder.parentId,
+                userId: folder.userId,
+            })),
         parentFolder: parentId ? await prisma.folder.findUnique({
             where: { id: parentId },
             select: { id: true, name: true, parentId: true }
@@ -368,7 +382,6 @@ export const getFolderFiles = expressAsyncHandler(async (req, res) => {
                     name: true,
                     size: true,
                     mimetype: true,
-                    url: true,
                     createdAt: true,
                     updatedAt: true
                 }
@@ -404,12 +417,11 @@ export const getFolderFiles = expressAsyncHandler(async (req, res) => {
 
     return res.status(200).json({
         folder: {
-            id: folder.id,
-            name: folder.name,
-            parentId: folder.parentId,
-            parent: folder.parent,
-            createdAt: folder.createdAt,
-            updatedAt: folder.updatedAt
+                id: folder.id,
+                name: folder.name,
+                createdAt: folder.createdAt,
+                parentId: folder.parentId,
+                userId: folder.userId,
         },
         files: folder.files,
         subfolders: folder.subfolders,
