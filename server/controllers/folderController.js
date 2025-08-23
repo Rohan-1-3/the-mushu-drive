@@ -4,8 +4,8 @@ import { v4 as uuid } from "uuid";
 import { validateRequest } from "../configs/validateRequest.js";
 import { body } from "express-validator";
 import { generateUniqueFolderName } from "../utils/nameResolution.js";
-
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { supabase } from "../configs/supabase.js";
+import { forceDeleteFolderContentsWithTransaction, getAllFilesRecursive, getAllFolderIdsRecursive, updateFolderHierarchyTimestamps } from "../utils/fileAndFolders.js";
 
 const prisma = prismaService.getClient();
 
@@ -14,70 +14,6 @@ const validateFolderName = [
         .isLength({ min: 1, max: 30 }).withMessage("Folder name length to be between 1 and 30.")
         .escape()
 ]
-
-// const validateParentId = [
-//     body("parentId").optional().isUUID().withMessage("Parent ID must be a valid UUID")
-// ]
-
-const updateFolderHierarchyTimestamps = async (folderId, userId) => {
-    if (!folderId) return;
-    
-    let currentFolderId = folderId;
-    const updatedFolders = new Set(); // Prevent infinite loops
-    
-    while (currentFolderId && !updatedFolders.has(currentFolderId)) {
-        updatedFolders.add(currentFolderId);
-        
-        // Update current folder timestamp
-        const updatedFolder = await prisma.folder.update({
-            where: { 
-                id: currentFolderId,
-                userId: userId // Ensure user owns the folder
-            },
-            data: {
-                updatedAt: new Date()
-            },
-            select: {
-                parentId: true
-            }
-        }).catch(() => null); // Handle case where folder doesn't exist or user doesn't own it
-        
-        if (!updatedFolder) break;
-        
-        // Move to parent folder
-        currentFolderId = updatedFolder.parentId;
-    }
-};
-
-// Transaction-safe recursive function to force delete folder contents
-const forceDeleteFolderContentsWithTransaction = async (folderId, userId, tx) => {
-    // Delete all files in this folder
-    await tx.file.deleteMany({
-        where: {
-            folderId: folderId,
-            userId: userId
-        }
-    });
-
-    // Get all subfolders
-    const subfolders = await tx.folder.findMany({
-        where: {
-            parentId: folderId,
-            userId: userId
-        },
-        select: {
-            id: true
-        }
-    });
-
-    // Recursively delete each subfolder and its contents
-    for (const subfolder of subfolders) {
-        await forceDeleteFolderContentsWithTransaction(subfolder.id, userId, tx);
-        await tx.folder.delete({
-            where: { id: subfolder.id }
-        });
-    }
-};
 
 export const createFolder = [
     validateFolderName, validateRequest, expressAsyncHandler(async (req, res) => {
@@ -574,3 +510,203 @@ export const updateFolderTimestampForUpload = async (folderId, userId) => {
     await updateFolderHierarchyTimestamps(folderId, userId);
 };
 
+export const shareFolder = expressAsyncHandler(async (req, res)=>{
+    console.log("Sharing folder");
+    const folderId = req.params.id;
+    const userId = req.user.id;
+    const { shareTime } = req.body; // in seconds
+
+    // Check folder ownership
+    const folder = await prisma.folder.findFirst({
+        where: { id: folderId, userId }
+    });
+    if (!folder) {
+        return res.status(404).json({ error: "Folder not found or you don't have permission to share it." });
+    }
+    console.log("Sharing folder");
+    // Get all files recursively
+    const files = await getAllFilesRecursive(folderId);
+    console.log("Sharing folder");
+    // Get all folder IDs recursively
+    const folderIds = await getAllFolderIdsRecursive(folderId);
+    console.log(files, folderIds);
+
+    if (files.length === 0 && folderIds.length === 0) {
+        return res.status(404).json({ error: "No files or folders found in this folder or its subfolders." });
+    }
+
+    // Delete previous sharedFile records for these files and user
+    if (files.length > 0) {
+        await prisma.sharedFile.deleteMany({
+            where: {
+                fileId: { in: files.map(f => f.id) },
+                userId
+            }
+        });
+    }
+    // Delete previous sharedFolder records for these folders and user
+    if (folderIds.length > 0) {
+        await prisma.sharedFolder.deleteMany({
+            where: {
+                folderId: { in: folderIds },
+                userId
+            }
+        });
+    }
+
+    // Create signed URLs and sharedFile records
+    const results = [];
+    try{
+        for (const file of files) {
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+            .from('files')
+            .createSignedUrl(file.supabasePath, shareTime);
+
+        if (signedUrlError) {
+            results.push({
+                fileId: file.id,
+                error: signedUrlError.message
+            });
+            continue;
+        }
+
+        await prisma.sharedFile.create({
+            data: {
+                id: uuid(),
+                fileId: file.id,
+                userId,
+                expiresAt: new Date(Date.now() + shareTime * 1000),
+                link: signedUrlData.signedUrl
+            }
+        });
+
+        results.push({
+            fileId: file.id,
+            downloadUrl: signedUrlData.signedUrl
+        });
+    }
+
+    // Create sharedFolder records for all folders
+    for (const fId of folderIds) {
+        // Generate a unique link for the folder (could be a UUID or a custom URL)
+        const folderLink = uuid();
+        await prisma.sharedFolder.create({
+            data: {
+                id: uuid(),
+                folderId: fId,
+                userId,
+                expiresAt: new Date(Date.now() + shareTime * 1000),
+                link: folderLink
+            }
+        });
+        results.push({
+            folderId: fId,
+            folderLink
+        });
+    }
+    }catch(err){
+        console.error("Error sharing folder:", err);
+        return res.status(500).json({ error: "Failed to share folder." });
+    }
+
+    return res.status(200).json({
+        message: "Folder and its contents shared successfully.",
+        results
+    });
+})
+
+// Unshare a folder and all its subfolders/files
+export const unshareFolder = expressAsyncHandler(async (req, res) => {
+    const folderId = req.params.id;
+    const userId = req.user.id;
+
+    // Check folder ownership
+    const folder = await prisma.folder.findFirst({
+        where: { id: folderId, userId }
+    });
+    if (!folder) {
+        return res.status(404).json({ error: "Folder not found or you don't have permission to unshare it." });
+    }
+
+    // Get all files recursively
+    const files = await getAllFilesRecursive(folderId);
+    // Get all folder IDs recursively
+    const folderIds = await getAllFolderIdsRecursive(folderId);
+
+    // Delete sharedFile records for these files and user
+    if (files.length > 0) {
+        await prisma.sharedFile.deleteMany({
+            where: {
+                fileId: { in: files.map(f => f.id) },
+                userId
+            }
+        });
+    }
+    // Delete sharedFolder records for these folders and user
+    if (folderIds.length > 0) {
+        await prisma.sharedFolder.deleteMany({
+            where: {
+                folderId: { in: folderIds },
+                userId
+            }
+        });
+    }
+
+    return res.status(200).json({
+        message: "Folder and its contents unshared successfully."
+    });
+});
+
+export const getSharedFolder = expressAsyncHandler(async (req, res)=>{
+    const folderId = req.params.id;
+
+    // Find the sharedFolder record for this folder that is not expired
+    const sharedFolder = await prisma.sharedFolder.findFirst({
+        where: {
+            folderId,
+            expiresAt: {
+                gte: new Date()
+            }
+        },
+        include: {
+            folder: {
+                include: {
+                    files: {
+                        select: {
+                            id: true,
+                            name: true,
+                            size: true,
+                            mimetype: true,
+                            userId: true,
+                            folderId: true,
+                            updatedAt: true
+                        }
+                    },
+                    subfolders: {
+                        include: {
+                            files: true
+                        }
+                    }
+                }
+            },
+            user: {
+                select: {
+                    id: true,
+                    username: true
+                }
+            }
+        }
+    });
+
+    if (!sharedFolder) {
+        return res.status(404).json({ error: "Shared folder not found or link expired." });
+    }
+
+    return res.status(200).json({
+        message: "Shared folder retrieved successfully.",
+        folder: sharedFolder.folder,
+        sharedBy: sharedFolder.user,
+        sharedFolderId: sharedFolder.id,
+        expiresAt: sharedFolder.expiresAt
+    });
+})

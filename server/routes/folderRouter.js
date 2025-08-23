@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { hasAccess, isOwner, requireAuth } from "../configs/auth.js";
+import { requireAuth } from "../configs/auth.js";
 import { 
     createFolder, 
     getAllFolders, 
@@ -8,6 +8,9 @@ import {
     deleteFolder, 
     getFolderFiles,
     bulkDeleteFolders,
+    shareFolder,
+    unshareFolder,
+    getSharedFolder,
 } from "../controllers/folderController.js";
 
 export const folderRouter = new Router();
@@ -24,6 +27,7 @@ folderRouter.put("/f/:id", requireAuth, updateFolder);
 folderRouter.delete("/f/:id", requireAuth, deleteFolder);
 folderRouter.post("/bulk-delete", requireAuth, bulkDeleteFolders);
 
-// folderRouter.put("/f/:id/move", requireAuth, moveFolder);
-// folderRouter.post("/f/:id/share", requireAuth, shareFolder);
-// folderRouter.delete("/f/:id/share", requireAuth, unshareFolder);
+folderRouter.post("/f/:id/share", requireAuth, shareFolder);
+folderRouter.delete("/f/:id/share", requireAuth, unshareFolder);
+
+folderRouter.get("/f/:id/share", getSharedFolder);

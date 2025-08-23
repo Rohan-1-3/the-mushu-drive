@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { changeFileName, deleteMultipleFiles, deleteSharedFile, deleteSingleFile, downloadFile, getAllFiles, getAllSharedFiles, getFileDownloadUrl, getSharedFileById, getSingleFile, shareAFile, uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
-import { isOwner, requireAuth } from "../configs/auth.js";
+import { changeFileName, deleteMultipleFiles, 
+    deleteSharedFile, deleteSingleFile, 
+    downloadFile, getAllFiles, 
+    getAllSharedFiles, getFileDownloadUrl, 
+    getSharedFileById, getSingleFile, shareAFile, 
+    uploadMultipleFiles, uploadSingleFile } from "../controllers/fileController.js";
+import { requireAuth } from "../configs/auth.js";
 
 export const fileRouter = new Router();
 
