@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { fileApi } from '../../lib/api';
+import { fileApi, sharedFileAndFolderApi } from '../../lib/api';
 
-const FileViewer = ({ file, isOpen, onClose }) => {
+const FileViewer = ({ file, isOpen, onClose, fromShare = false }) => {
     const [previewUrl, setPreviewUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -43,8 +43,8 @@ const FileViewer = ({ file, isOpen, onClose }) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fileApi.getPreviewUrl(file.id);
-            setPreviewUrl(response.downloadUrl);
+            const response = fromShare ? await sharedFileAndFolderApi.getSharedFile(file.id) : await fileApi.getPreviewUrl(file.id);
+            setPreviewUrl(fromShare ? response.link :response.downloadUrl);
         } catch (err) {
             console.error('Failed to load preview URL:', err);
             setError('Failed to load file preview');

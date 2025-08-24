@@ -69,5 +69,12 @@ export const folderApi = {
     bulkDeleteFolders: (folderIds, force = false) => api.delete('/folders/bulk-delete', { data: { folderIds, force } })
 };
 
+export const sharedFileAndFolderApi = {
+    getSharedFolder: (folderId) => api.get(`/folders/f/${folderId}/share`),
+    getSharedFile: (fileId) => api.get(`/files/m/${fileId}/share`),
+    shareFolder: (folderId, shareDuration) => api.post(`/folders/f/${folderId}/share`, { shareDuration }),
+    unshareFolder: (folderId) => api.delete(`/folders/f/${folderId}/share`)
+};
+
 export default api;
 

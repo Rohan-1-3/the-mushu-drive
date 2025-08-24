@@ -10,7 +10,10 @@ import FileViewer from '../components/DriveComponents/FileViewer';
 import ConfirmationModal from '../components/ui/ConfirmationModal';
 import RenameModal from '../components/ui/RenameModal';
 import DeleteFolderModal from '../components/ui/DeleteFolderModal';
-import { fileApi, folderApi } from '../lib/api';
+import { fileApi, folderApi, sharedFileAndFolderApi } from '../lib/api';
+import { formatFileSize, getFileIcon} from '../lib/fileAndFolderHelper';
+import ShareFolderModal from '../components/ui/ShareFolderModal';
+import { SharedLinkModal } from '../components/ui/SharedLinkModal.';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -25,50 +28,29 @@ export default function Dashboard() {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [fileViewerState, setFileViewerState] = useState({ isOpen: false, file: null });
   const [loading, setLoading] = useState(false);
+  const [sharedLink, setSharedLink] = useState('');
 
   // Modal states
-  const [confirmationModal, setConfirmationModal] = useState({ 
-    isOpen: false, 
-    title: '', 
-    message: '', 
+  const [confirmationModal, setConfirmationModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
     onConfirm: null,
     type: 'danger'
   });
-  const [renameModal, setRenameModal] = useState({ 
-    isOpen: false, 
-    item: null, 
+  const [renameModal, setRenameModal] = useState({
+    isOpen: false,
+    item: null,
     currentName: ''
   });
   const [deleteFolderModal, setDeleteFolderModal] = useState({
     isOpen: false,
     folder: null
   });
-
-  // Helper function to get file type icon
-  const getFileIcon = (mimetype) => {
-    if (!mimetype) return '📄';
-    
-    if (mimetype.startsWith('image/')) return '🖼️';
-    if (mimetype.startsWith('video/')) return '🎥';
-    if (mimetype.startsWith('audio/')) return '🎵';
-    if (mimetype.includes('pdf')) return '📄';
-    if (mimetype.includes('word') || mimetype.includes('document')) return '📝';
-    if (mimetype.includes('excel') || mimetype.includes('spreadsheet')) return '📈';
-    if (mimetype.includes('powerpoint') || mimetype.includes('presentation')) return '📊';
-    if (mimetype.includes('text/')) return '📝';
-    if (mimetype.includes('zip') || mimetype.includes('archive')) return '🗜️';
-    
-    return '📄';
-  };
-
-  // Helper function to format file size
-  const formatFileSize = (bytes) => {
-    if (!bytes) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
+  const [shareModal, setShareModal] = useState({
+    isOpen: false,
+    item: null
+  });
 
   // Transform backend data to frontend format
   const transformFolderData = useCallback((folder) => ({
@@ -231,6 +213,13 @@ export default function Dashboard() {
     });
   };
 
+  const showShareModal = (item) => {
+    setShareModal({
+      isOpen: true,
+      item
+    });
+  };
+
   const showDeleteFolder = (folder) => {
     setDeleteFolderModal({
       isOpen: true,
@@ -274,6 +263,18 @@ export default function Dashboard() {
     }
   };
 
+  const handleShareFolder = async (item, duration) => {
+    try {
+      await sharedFileAndFolderApi.shareFolder(item.id, duration);
+      const shareLink = import.meta.env.VITE_NODE_ENV === 'development' ? `http://localhost:5173/shared/folder/${item.id}` : `https://the-mushu-drive.vercel.app/shared/folder/${item.id}`;
+      setSharedLink(shareLink);
+      showToast(`Folder "${item.name}" has been shared successfully.`, 'success');
+    } catch (error) {
+      console.error('Failed to share folder:', error);
+      showToast('Failed to share folder. Please try again.', 'error');
+    }
+  };
+
   const handleContextMenuAction = async (action, item) => {
     try {
       switch (action) {
@@ -288,10 +289,10 @@ export default function Dashboard() {
             window.open(response.downloadUrl, '_blank');
           }
           break;
-          
-        case 'share':
-          showToast(`Sharing functionality for ${item.name} will be available soon.`, 'info');
-          break;
+
+        case 'share': 
+          showShareModal(item);
+          break
           
         case 'rename':
           showRename(item);
@@ -470,6 +471,23 @@ export default function Dashboard() {
         onClose={() => setDeleteFolderModal({ ...deleteFolderModal, isOpen: false })}
         onConfirm={handleDeleteFolder}
         folder={deleteFolderModal.folder}
+      />
+
+      {/* Share Folder Modal */}
+      <ShareFolderModal
+        isOpen={shareModal.isOpen}
+        onClose={() => setShareModal({ ...shareModal, isOpen: false })}
+        onShare={(duration) => {
+          handleShareFolder(shareModal.item, duration);
+          setShareModal({ ...shareModal, isOpen: false });
+        }}
+      />
+
+      {/* Shared Link Modal */}
+      <SharedLinkModal
+        isOpen={sharedLink !== ''}
+        link={sharedLink}
+        onClose={() => setSharedLink('')}
       />
     </div>
   );

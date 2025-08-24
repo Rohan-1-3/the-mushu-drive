@@ -539,23 +539,13 @@ export const getAllSharedFiles = expressAsyncHandler(async (req, res, next) => {
 
 export const getSharedFileById = expressAsyncHandler(async (req, res, next) => {
     const sharedFileId = req.params.id;
-    const sharedFile = await prisma.sharedFile.findUnique({
+    const sharedFile = await prisma.sharedFile.findFirst({
         where: {
-            id: sharedFileId, 
+            fileId: sharedFileId,
             expiresAt: {
                 gt: new Date()
             }
-        },
-        include: { file: {
-            select: {
-                    id: true,
-                    name: true,
-                    size: true,
-                    mimetype: true,
-                    createdAt: true,
-                    updatedAt: true
-                }
-        } }
+        }
     });
 
     if (!sharedFile) {

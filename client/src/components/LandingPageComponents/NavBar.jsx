@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useMobileDetection from '../../hooks/useMobileDetection';
 
-function Navbar() {
+function Navbar({ isAuthenticated}) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const isMobile = useMobileDetection();
 
@@ -35,10 +35,10 @@ function Navbar() {
                 {/* Desktop Login Button */}
                 <div className="hidden md:block">
                     <Link 
-                        to="/login"
+                        to={isAuthenticated ? "/drive" : "/login"}
                         className="px-6 py-2 rounded-full border-1 border-accent2-dark text-sm text-text-dark font-semibold bg-accent2-dark/10 backdrop-blur-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 transform hover:scale-105"
                     >
-                        LOGIN
+                        {isAuthenticated ? "DRIVE" : "LOGIN"}
                     </Link>
                 </div>
 

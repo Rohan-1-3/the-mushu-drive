@@ -6,6 +6,7 @@ import ProtectedLayout from "./Layouts/ProtectedLayout.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ErrorPage from "./components/ErrorPage.jsx";
 import { API_BASE, authApi } from './lib/api.js';
+import SharedFolder from "./pages/SharedFolder.jsx";
 
 async function checkAuth() {
     try {
@@ -68,7 +69,16 @@ export const router = createBrowserRouter([
             { path: "folder/:folderId", element: <Dashboard /> }
         ]
     },
-    // Catch-all route
+    {
+        id: "shared",
+        path: "/shared",
+        errorElement: <ErrorPage />,
+        loader: checkAuth,
+        children: [
+            { index: true, element: <SharedFolder /> },
+            { path: "folder/:folderId", element: <SharedFolder /> }
+        ]
+    },
     {
         path: "*",
         element: <ErrorPage />

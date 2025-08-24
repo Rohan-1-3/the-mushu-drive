@@ -511,10 +511,9 @@ export const updateFolderTimestampForUpload = async (folderId, userId) => {
 };
 
 export const shareFolder = expressAsyncHandler(async (req, res)=>{
-    console.log("Sharing folder");
     const folderId = req.params.id;
     const userId = req.user.id;
-    const { shareTime } = req.body; // in seconds
+    const { shareDuration } = req.body; // in seconds
 
     // Check folder ownership
     const folder = await prisma.folder.findFirst({
@@ -523,13 +522,10 @@ export const shareFolder = expressAsyncHandler(async (req, res)=>{
     if (!folder) {
         return res.status(404).json({ error: "Folder not found or you don't have permission to share it." });
     }
-    console.log("Sharing folder");
     // Get all files recursively
     const files = await getAllFilesRecursive(folderId);
-    console.log("Sharing folder");
     // Get all folder IDs recursively
     const folderIds = await getAllFolderIdsRecursive(folderId);
-    console.log(files, folderIds);
 
     if (files.length === 0 && folderIds.length === 0) {
         return res.status(404).json({ error: "No files or folders found in this folder or its subfolders." });
@@ -560,7 +556,7 @@ export const shareFolder = expressAsyncHandler(async (req, res)=>{
         for (const file of files) {
         const { data: signedUrlData, error: signedUrlError } = await supabase.storage
             .from('files')
-            .createSignedUrl(file.supabasePath, shareTime);
+            .createSignedUrl(file.supabasePath, shareDuration);
 
         if (signedUrlError) {
             results.push({
@@ -575,7 +571,7 @@ export const shareFolder = expressAsyncHandler(async (req, res)=>{
                 id: uuid(),
                 fileId: file.id,
                 userId,
-                expiresAt: new Date(Date.now() + shareTime * 1000),
+                expiresAt: new Date(Date.now() + shareDuration * 1000),
                 link: signedUrlData.signedUrl
             }
         });
@@ -595,7 +591,7 @@ export const shareFolder = expressAsyncHandler(async (req, res)=>{
                 id: uuid(),
                 folderId: fId,
                 userId,
-                expiresAt: new Date(Date.now() + shareTime * 1000),
+                expiresAt: new Date(Date.now() + shareDuration * 1000),
                 link: folderLink
             }
         });
