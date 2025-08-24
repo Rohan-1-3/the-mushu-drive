@@ -11,7 +11,7 @@ import ConfirmationModal from '../components/ui/ConfirmationModal';
 import RenameModal from '../components/ui/RenameModal';
 import DeleteFolderModal from '../components/ui/DeleteFolderModal';
 import { fileApi, folderApi, sharedFileAndFolderApi } from '../lib/api';
-import { formatFileSize, getFileIcon} from '../lib/fileAndFolderHelper';
+import { formatFileSize, getFileIcon } from '../lib/fileAndFolderHelper';
 import ShareFolderModal from '../components/ui/ShareFolderModal';
 import { SharedLinkModal } from '../components/ui/SharedLinkModal.';
 
@@ -290,10 +290,16 @@ export default function Dashboard() {
           }
           break;
 
-        case 'share': 
-          showShareModal(item);
-          break
-          
+        case 'share': {
+          try{
+            await sharedFileAndFolderApi.getSharedFolder(item.id);
+            const shareLink = import.meta.env.VITE_NODE_ENV === 'development' ? `http://localhost:5173/shared/folder/${item.id}` : `https://the-mushu-drive.vercel.app/shared/folder/${item.id}`;
+            setSharedLink(shareLink);
+          }catch(err){
+            showShareModal(item);
+          }
+          break;
+        }
         case 'rename':
           showRename(item);
           break;

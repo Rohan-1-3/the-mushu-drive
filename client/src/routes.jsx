@@ -66,7 +66,8 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children:[
             { index: true, element: <Dashboard /> },
-            { path: "folder/:folderId", element: <Dashboard /> }
+            { path: "folder/:folderId", element: <Dashboard /> },
+            { path: "share", element: <SharedFolder fromDriveShare={true} /> }
         ]
     },
     {

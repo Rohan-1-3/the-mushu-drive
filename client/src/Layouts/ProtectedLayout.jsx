@@ -25,10 +25,7 @@ export default function ProtectedLayout() {
     fetchUser();
   }, [navigate]);
 
-  const handleLogout = async () => {
-    await authApi.logout();
-    navigate('/login');
-  };
+  
 
   const getInitials = (firstname, lastname) => {
     if (!firstname || !lastname) return 'U';
@@ -38,7 +35,7 @@ export default function ProtectedLayout() {
   return (
     <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark flex">
       {/* Sidebar */}
-      <Sidebar onLogout={handleLogout} />
+      <Sidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">

@@ -113,7 +113,7 @@ function ShareFolderModal({ isOpen, onClose, onShare }) {
                 <select
                   value={customUnit}
                   onChange={handleCustomUnitChange}
-                  className="ml-2 border rounded-lg px-2 py-1 bg-white/20 dark:bg-black/20 text-text-light dark:text-text-dark border-white/30 dark:border-white/20"
+                  className="ml-2 border rounded-lg px-2 py-1 bg-white/95 dark:bg-gray-900/95 text-text-light dark:text-text-dark border-white/30 dark:border-white/20"
                 >
                   <option value="hour">Hour(s)</option>
                   <option value="day">Day(s)</option>

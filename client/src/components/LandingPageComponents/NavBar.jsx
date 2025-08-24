@@ -26,10 +26,10 @@ function Navbar({ isAuthenticated}) {
 
                 {/* Desktop Nav Links */}
                 <div className="hidden md:flex space-x-6 text-sm tracking-wider">
-                    <a href="#" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">HOME</a>
-                    <a href="#" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">ABOUT</a>
-                    <a href="#" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">DRIVE</a>
-                    <a href="#" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">CONTACT</a>
+                    <Link to="/" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">HOME</Link>
+                    <Link to="/about" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">ABOUT</Link>
+                    <Link to="/drive" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">DRIVE</Link>
+                    <Link to="/contact" className="text-text-dark hover:text-accent2-dark transition-colors duration-300">CONTACT</Link>
                 </div>
 
                 {/* Desktop Login Button */}
@@ -64,34 +64,34 @@ function Navbar({ isAuthenticated}) {
                         <div className="mx-6 mt-2 mb-4 bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-2xl overflow-hidden">
                             {/* Mobile Nav Links */}
                             <div className="py-2">
-                                <a
-                                    href="#"
+                                <Link
+                                    to="/"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
                                     HOME
-                                </a>
-                                <a
-                                    href="#"
+                                </Link>
+                                <Link
+                                    to="/about"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
                                     ABOUT
-                                </a>
-                                <a
-                                    href="#"
+                                </Link>
+                                <Link
+                                    to="/drive"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
                                     DRIVE
-                                </a>
-                                <a
-                                    href="#"
+                                </Link>
+                                <Link
+                                    to="/contact"
                                     onClick={closeMobileMenu}
                                     className="block px-6 py-4 text-text-dark hover:bg-white/20 dark:hover:bg-white/10 hover:text-accent2-dark transition-all duration-300 font-medium tracking-wider"
                                 >
                                     CONTACT
-                                </a>
+                                </Link>
                             </div>
 
                             {/* Mobile Login Button */}

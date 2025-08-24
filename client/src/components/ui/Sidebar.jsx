@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { sidebarItems } from '../../data';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { authApi } from '../../lib/api';
 
-function Sidebar({ onLogout }) {
+function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate()
 
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
+    };
+
+    const handleLogout = async () => {
+        await authApi.logout();
+        navigate('/login');
     };
 
     return (
@@ -72,10 +79,9 @@ function Sidebar({ onLogout }) {
                 {/* Logout Button */}
                 <div className="p-4 border-white/20 dark:border-white/10">
                     <button
-                        onClick={onLogout}
-                        className={`flex items-center space-x-3 px-3 py-3 rounded-xl text-text-light dark:text-text-dark transition-all duration-300 group ${
-                            !isOpen ? 'justify-center' : 'space-x-3'
-                        }`}
+                        onClick={handleLogout}
+                        className={`flex items-center space-x-3 px-3 py-3 rounded-xl text-text-light dark:text-text-dark transition-all duration-300 group ${!isOpen ? 'justify-center' : 'space-x-3'
+                            }`}
                         title={!isOpen ? 'Logout' : undefined}
                     >
                         <span className="text-2xl flex-shrink-0 w-8 h-8 flex items-center justify-center">🚪</span>
