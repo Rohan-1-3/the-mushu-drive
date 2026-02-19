@@ -79,7 +79,10 @@ export const registerUser = [
     })
 ]
 
-export const loginUser = [validateUserCredentials, validateRequest,
+export const loginUser = [(req, res, next) => {
+    console.log("Login endpoint hit at:", new Date().toISOString());
+    next();
+  }, validateUserCredentials, validateRequest,
     expressAsyncHandler(async (req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
             if (err) return next(err);
